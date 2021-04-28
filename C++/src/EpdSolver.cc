@@ -5,20 +5,17 @@
 *@details Procedimento principal da solução da EDP. Neste método e executado     <!--
 *-->      o fluxo principal de solução.
 *********************************************************************************
-*@param files - arquivos de saida de dados  
-*********************************************************************************
 *@date      19/04/2021 - 25/04/2021
 *@author    Henrique C. C. de Andrade
-*******************************************************************************/
-void EpdSolver::solver(Files &files){
+*********************************************************************************/
+void EpdSolver::solver(void){
 
   int nStep = intTemp->get_nStep();
   double *uCell = mesh->get_cells().get_u();
 
   // ...
   times.init_timer();
-  files.writeGeomNode(*this->mesh);
-  files.writeGeomCell(*this->mesh);
+  this->writer->write();
   times.updateResTimer();
   // ............................................................................
 
@@ -28,8 +25,7 @@ void EpdSolver::solver(Files &files){
 
   // ...
   times.init_timer();
-  files.resNode(*this->mesh, *intTemp);
-  files.resCell(*this->mesh, *intTemp);
+  this->writer->write();
   times.updateResTimer();
   // ............................................................................
 
@@ -59,8 +55,7 @@ void EpdSolver::solver(Files &files){
 
     // ...
     times.init_timer();
-    files.resNode(*this->mesh, *intTemp);
-    files.resCell(*this->mesh, *intTemp);
+    this->writer->write();
     times.updateResTimer();
     // ..........................................................................   
 

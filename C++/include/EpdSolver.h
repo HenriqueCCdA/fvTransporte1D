@@ -8,6 +8,7 @@
 #include"Prop.h"
 #include"IntTemp.h"
 #include"CellLoop.h"
+#include"Writer.h"
 
 using namespace std;
 
@@ -27,9 +28,9 @@ class EpdSolver {
   private:
     Mesh *mesh;          /**< Objeto para malha*/
     IntTemp *intTemp;    /**< Objeto para integração temporal*/
-    CellLoop *cellLoop;   /**< Objeto para loop nas células*/
-    Solver *solverEq;     /**< Objeto para o solver do sistema de equações*/
-  
+    CellLoop *cellLoop;  /**< Objeto para loop nas células*/
+    Solver *solverEq;    /**< Objeto para o solver do sistema de equações*/
+    Writer *writer;      /**< Objeto para escrita de resultados*/
   public:
 
     // ... Construtor
@@ -47,11 +48,12 @@ class EpdSolver {
      *@author    Henrique C. C. de Andrade
      ***************************************************************************/
     EpdSolver(Mesh *mesh, IntTemp *intTemp,
-              CellLoop *cellLoop, Solver *solver) {
+              CellLoop *cellLoop, Solver *solver, Writer *writer) {
       this->mesh = mesh;
       this->intTemp = intTemp;      
       this->cellLoop = cellLoop;
       this->solverEq = solver;
+      this->writer = writer;
     }
 
    /***************************************************************************
@@ -62,7 +64,7 @@ class EpdSolver {
    /***************************************************************************
     *@brief Procedimento principal da solução da EDP.                       
     ***************************************************************************/
-    void solver(Files &files);
+    void solver(void);
 
 };
 #endif

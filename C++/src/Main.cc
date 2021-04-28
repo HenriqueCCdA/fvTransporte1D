@@ -6,8 +6,8 @@
 #include"../include/CellLoop.h"
 #include"../include/RunTimes.h"
 #include"../include/GerenciadoDeMemoria.h"
-
 #include"../include/GlobalVar.h"
+#include"../include/Writer.h"
 
 int main(int argc, char *argv[]) {
 
@@ -21,6 +21,9 @@ int main(int argc, char *argv[]) {
   mesh.display();
   // ............................................................................
 
+  // ...
+  Writer *writer = new WriterTxt(&mesh, &intTemp, files.get_nameOut());
+  // ............................................................................
   // ... 
   DataStruct *data = new TriaDiagonal(mesh.get_nCells());
   Solver *solver = new TriSolver(data);
@@ -35,7 +38,7 @@ int main(int argc, char *argv[]) {
   // ............................................................................
 
   // 
-  EpdSolver epd(&mesh, &intTemp, heatCell1D, solver);
+  EpdSolver epd(&mesh, &intTemp, heatCell1D, solver, writer);
   // ............................................................................
   
   //
@@ -43,15 +46,15 @@ int main(int argc, char *argv[]) {
   // ............................................................................
   
   // ... abrindo o arquivos de saida
-  files.openOutputFile();
+  writer->openOutputFile();
   // ............................................................................
  
   // ...
-  epd.solver(files);
+  epd.solver();
   // ............................................................................ 
 
   // ...
-  files.closeOutputFile();
+  writer->closeOutputFile();
   // ............................................................................
 
   // ...  

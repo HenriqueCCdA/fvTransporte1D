@@ -6,6 +6,7 @@
 
 #include"../include/Mesh.h"
 #include"../include/IntTemp.h"
+#include"../include/VTK.h"
 
 using namespace std;
 
@@ -141,6 +142,82 @@ public:
    ***************************************************************************/
   ofstream& get_fileOutCell() { return this->fileOutCell; }
 
+};
+
+
+/*******************************************************************************
+ *@class WriterVtk
+ *******************************************************************************
+ *@brief     A Classe que gerencia escrita dos os arquivos de resultado.
+ *@details   A Classe que gerencia escrita dos os arquivos de resultado. O      <!--
+ *-->        arquivo do tipo VTK.  
+ *******************************************************************************
+ *@date      29/04/2021 - 29/04/2021
+ *@author    Henrique C. C. de Andrade
+ *******************************************************************************/
+class WriterVTK : public Writer, public VTK {
+
+private:
+  ofstream fileOut;    /**< Arquivo de escrita*/
+  IntTemp *intTemp;    /**< Objeto para integração temporal*/
+  Mesh    *mesh;       /**< Objeto para a malha*/
+  bool    firstCall;   /**< Guarda a primeira vez que o write é chamado*/
+
+  string fullNameFile(void);
+
+public:
+  // ... Construtor
+  /***************************************************************************
+   *@brief Contrutor
+   *@details Este construtor recebe referencias para mesh, inTemp         <!--
+   *         , cellLoop e solver.
+   ***************************************************************************
+   *@param mesh     - Malha utilizada
+   *@param intTemp  - Integração temporal
+   *@param name     - o prefixo do arquivo de saida
+   ***************************************************************************
+   *@date      19/04/2021 - 25/04/2021
+   *@author    Henrique C. C. de Andrade
+   ***************************************************************************/
+  WriterVTK(Mesh* mesh, IntTemp* intTemp, string name) {
+    this->mesh = mesh;
+    this->intTemp = intTemp;
+    this->set_preName(name);
+    this->firstCall = true;
+  }
+
+  /****************************************************************************
+  * @brief Escreve os resultados.
+  *****************************************************************************/
+  void write(void) override;
+  /****************************************************************************/
+
+  /*****************************************************************************
+  * @brief Fecha os arquivos de saida.
+  ******************************************************************************
+  * @date      19/04/2021 - 25/04/2021
+  * @author    Henrique C. C. de Andrade
+  ******************************************************************************/
+  void closeOutputFile(void) override {
+    fileOut.close();
+  }
+
+  /****************************************************************************
+   *@brief     Abre os arquivos de saida
+   ****************************************************************************/
+  void openOutputFile(void) override;
+  
+  // ... getters
+  /***************************************************************************
+   * @brief Obtém a referencia do arquivo de saida para escrita
+   ***************************************************************************
+   * @return - referencia para o arquivo
+   ***************************************************************************
+   * @date      19/04/2021 - 25/04/2021
+   * @author    Henrique C. C. de Andrade
+   ***************************************************************************/
+  ofstream& get_fileOut() { return this->fileOut; }
+  
 };
 
 #endif

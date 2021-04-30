@@ -4,6 +4,11 @@
 #include"GerenciadoDeMemoria.h"
 
 
+enum typeCell{
+  line = 1 /**< Tipo de célula*/
+};
+
+
 /*******************************************************************************
  *@class Cells
  *******************************************************************************
@@ -21,6 +26,8 @@ class Cells {
     int *nodes; /**< Conectividades nodais das células Nodes[nCel,0] = no1 e Nodes[nCel,1] = no2*/
     double *u;  /**< Valores do campo escalar*/
     double *xc; /**< Valores dos centroides*/
+    short *nNodesByCell; /**< Numeros de nos por celula*/
+    short *type; /**< Tipo da celula*/
     double dx;  /**< Comprimento das celulas*/
     Prop prop;  /**< Propriedades fisicas por células*/      
 
@@ -125,18 +132,43 @@ class Cells {
     int* get_nodes() { return this->nodes; }
     // ..........................................................................
 
+    /***************************************************************************
+    * @brief Retorna o arranjos nNodesByCell
+    ***************************************************************************
+    * @return - ponteiro o arranjos com os numero de nos por célula
+    ***************************************************************************
+    * @date      19/04/2021 - 30/04/2021
+    * @author    Henrique C. C. de Andrade
+    ***************************************************************************/
+    short* get_nNodesByCell() { return this->nNodesByCell; }
+    // ..........................................................................
+
+    /***************************************************************************
+    * @brief Retorna o arranjos type           
+    ***************************************************************************
+    * @return - ponteiro o arranjos com o tipo das células            
+    ***************************************************************************
+    * @date      19/04/2021 - 30/04/2021
+    * @author    Henrique C. C. de Andrade
+    ***************************************************************************/
+    short* get_type() { return this->type; }
+    // ..........................................................................
+    
     // ... metodos
 
     /***************************************************************************
-     * @brief Aloca memória para os arranjos xc, u, nodes e prop
-     **************************************************************************
+     * @brief Aloca memória para os arranjos xc, u, nodes, type, nNodesByCell   <!--
+     * -->    e prop.
+     ***************************************************************************
      * @param n - Dimensão dos arranjos
-     **************************************************************************
-     * @date      19/04/2021 - 25/04/2021
+     ***************************************************************************
+     * @date      19/04/2021 - 30/04/2021
      * @author    Henrique C. C. de Andrade
      ***************************************************************************/
     void alloc(int n) {
       
+      this->type         = mem.alloc<short>(n);
+      this->nNodesByCell = mem.alloc<short>(n);
       this->xc = mem.alloc<double>(n);
       this->u = mem.alloc<double>(n);
       this->nodes = mem.alloc<int>(2*n);
@@ -150,12 +182,14 @@ class Cells {
     /***************************************************************************
      * @brief Destrutor
      * @details Este destrutor libera a memória utilizada nos arranjos xc  <!--
-     * -->    , u, nodes e prop.
+     * -->    , u, nodes, nNodesByCell, type e prop.
      **************************************************************************
-     * @date      19/04/2021 - 25/04/2021
+     * @date      19/04/2021 - 30/04/2021
      * @author    Henrique C. C. de Andrade
      ***************************************************************************/
     ~Cells() {
+      mem.dealloc<short>(&this->type);
+      mem.dealloc<short>(&this->nNodesByCell);
       mem.dealloc<double>(&this->xc);
       mem.dealloc<double>(&this->u);
       mem.dealloc<int>(&this->nodes);

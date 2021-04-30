@@ -13,6 +13,7 @@ void WriterTxt::write(void){
 
   // ... geometria
   if (this->firstCall) {
+    this->openOutputFile();
     this->geomCell(*this->mesh);
     this->geomNode(*this->mesh);
     this->firstCall = false;

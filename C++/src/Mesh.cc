@@ -58,7 +58,8 @@ void Mesh::grid(void) {
 
   double *x = this->nodes.get_x();
   double dx = this->l / nCells;
-
+  short *nen = this->cells.get_nNodesByCell();
+  short *type = this->cells.get_type();
   this->get_cells().set_dx(dx);
 
   // ...
@@ -76,6 +77,8 @@ void Mesh::grid(void) {
     nodes[2 * i] = i;
     nodes[2 * i + 1] = i + 1;
     xc[i] = (x[i + 1] + x[i])*0.5e0;
+    nen[i] = 2;
+    type[i] = typeCell::line;
   }
   // ........................................................................
 

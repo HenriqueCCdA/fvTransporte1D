@@ -24,6 +24,16 @@ enum fieldVTK {
 
 using namespace std;
 
+
+/*******************************************************************************
+ *@class VTK   
+ *******************************************************************************
+ *@brief     A Classe que com os metodos que escrevem os arquivos do VTK.                   
+ *@details   A Classe que com os metodos que escrevem os arquivos do VTK. 
+ *******************************************************************************
+ *@date      2021 - 2021
+ *@author    Henrique C. C. de Andrade
+ *******************************************************************************/
 class VTK {
 
   public:

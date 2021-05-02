@@ -8,7 +8,10 @@
 #include"../include/IntTemp.h"
 #include"../include/VTK.h"
 
-using namespace std;
+enum typeWriters {
+  TXT = 1,  /**< Tipo do arquivo texto.*/  
+  VTK = 2   /**< Tipo do arquivo VTK.*/
+};
 
 /*******************************************************************************
  *@class Writer
@@ -146,7 +149,7 @@ public:
 
 
 /*******************************************************************************
- *@class WriterVtk
+ *@class WriterVTK 
  *******************************************************************************
  *@brief     A Classe que gerencia escrita dos os arquivos de resultado.
  *@details   A Classe que gerencia escrita dos os arquivos de resultado. O      <!--
@@ -219,5 +222,58 @@ public:
   ofstream& get_fileOut() { return this->fileOut; }
   
 };
+
+/*******************************************************************************
+*@class Writers
+*******************************************************************************
+*@brief     A Classe que gerencia a escolhado do tipo do arquivos de saida.
+*@details   A Classe que gerencia a escolhado do tipo do arquivos de saida.      
+*           Escolhe entre os arquivos do tipo:                                      
+*           TXT                                                                       
+*           VTK
+*******************************************************************************
+*@date      19/04/2021 - 25/04/2021
+*@author    Henrique C. C. de Andrade
+***************************************************************************/
+class Writers {
+
+public:
+
+
+  /***************************************************************************
+  *@details Seleciona a classe com o tipo de arquivo escolhido.
+  ***************************************************************************
+  *@param mesh     - Malha utilizada
+  *@param intTemp  - Integração temporal
+  *@param name     - O prefixo do arquivo de saida
+  *@param cod      - Tipo do arquivo de saida
+  ***************************************************************************
+  *@date      19/04/2021 - 25/04/2021
+  *@author    Henrique C. C. de Andrade
+  ***************************************************************************/
+  Writer* select(Mesh* mesh, IntTemp* intTemp, string name, int cod) {
+
+    switch (cod){
+
+      // ... Arquivo txt
+      case typeWriters::TXT:
+        return new WriterTxt(mesh, intTemp, name);
+      
+      // ... Arquivo VTK
+      case typeWriters::VTK:
+        return new WriterVTK(mesh, intTemp, name);        
+
+      default:
+        cout<<"Tipo do arquivo de saida invalido!!" << endl;
+        exit(typeOutFile);
+    }
+    return nullptr;
+  };
+
+};
+
+
+
+
 
 #endif

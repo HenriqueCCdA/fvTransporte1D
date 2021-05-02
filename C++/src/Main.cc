@@ -45,9 +45,6 @@ int main(int argc, char *argv[]) {
   //
   epd.init();
   // ............................................................................
-  
-  writer->write();
-  return 0;
 
   // ...
   epd.solver();

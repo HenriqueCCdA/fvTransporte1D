@@ -20,33 +20,58 @@ inline string WriterVTK::fullNameFile(void) {
  *@details Escreve os resultados. A primeira vez que e chama é escrita      <!--
  *-->      a geometria. Apartir da segunda são escritos os resultados.
  ***************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      19/04/2021 - 01/05/2021
  *@author    Henrique C. C. de Andrade
  ***************************************************************************/
 void WriterVTK::write(void) {
 
   ofstream& file = this->get_fileOut();
+  int nCells = this->mesh->get_cells().get_nCells();
+  int nNodes = this->mesh->get_nodes().get_nNodes();
 
+  // ... abrindo o arquivo
   this->openOutputFile();
 
+  // ... cabecalho
   this->headVtk(file);
 
   this->timeVtk(file, 
                 this->intTemp->get_iStep(),
                 this->intTemp->get_t());
-
+  
+  // ... escrita das coordenadas
   this->coorVtk(file,                
                 this->mesh->get_nodes().get_x(),
                 this->mesh->get_nNodes(),
                 1);
-
+  // ... escrita dos elementos
   this->cellsVtk(file,
                  this->mesh->get_cells().get_nodes(),
                  this->mesh->get_cells().get_nNodesByCell(),
                  this->mesh->get_cells().get_type(),
-                 this->mesh->get_cells().get_nCells());
+                 nCells);
+  
+  // ... Campo por celulas
+  this->cellData(file, nCells);
 
+  this->propVtk<double>(file,
+                this->mesh->get_cells().get_u(),
+                "cellU",
+                nCells,
+                1,
+                fieldVTK::scalarsVTK);
 
+  // ... Campo por Pontos
+  this->pointData(file, nNodes);
+
+  this->propVtk<double>(file,
+                      this->mesh->get_nodes().get_u(),
+                      "nodeU",
+                      nNodes,
+                      1,
+                      fieldVTK::scalarsVTK);
+
+  // ... fechando o arquivo
   this->closeOutputFile();
 }
 /****************************************************************************/

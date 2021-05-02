@@ -1,7 +1,10 @@
 #ifndef VTK_H
 #define VTK_H
 
-#include<ostream>
+#include<fstream>
+
+#include"Mesh.h"
+
 
 enum typeVTK {
   dotVTK   =  1, /**< Tipo ponto VTK*/
@@ -13,6 +16,12 @@ enum typeVTK {
   piraVTK  = 14  /**< Tipo piramede VTK*/
 };
 
+enum fieldVTK {
+  scalarsVTK = 1,  /**< Tipo escalar*/
+  vectorVTK  = 2,  /**< Tipo vetor*/
+  tensor     = 3   /**< Tipo tensor*/
+};
+
 using namespace std;
 
 class VTK {
@@ -20,119 +29,101 @@ class VTK {
   public:
 
     /***************************************************************************
-    *@details Escreve o cabecalho do arquivo vtk
-    ***************************************************************************
-    *@param file - Arquivo de escrita
-    *@s     s - String do cabecalho do arquivo
-    ***************************************************************************
-    *@date      29/04/2021 - 29/04/2021
-    *@author    Henrique C. C. de Andrade
+    *@brief Escreve o cabecalho do arquivo vtk
     ***************************************************************************/
-    void headVtk(ofstream &file, string s = "vtkFile"){
-   
-      file << "# vtk DataFile Version 3.0" << endl;
-      file << s << endl;
-      file << "ASCII" << endl;
-      file << "DATASET UNSTRUCTURED_GRID" << endl;
-      
-    };
+    void headVtk(ofstream &file, string s = "vtkFile");
+  
+    /***************************************************************************
+    *@brief Informacao temporal do arquivo vtk
+    ***************************************************************************/
+    void timeVtk(ofstream &file, int const iStep, double const t);
 
     /***************************************************************************
-    *@details Informacao temporal do arquivo vtk
-    ***************************************************************************
-    *@param file - Arquivo de escrita
-    *@param iStep - Passo de tempo
-    *@param t    - Tempo                  
-    ***************************************************************************
-    *@date      29/04/2021 - 29/04/2021
-    *@author    Henrique C. C. de Andrade
+    *@brief Escreve as coordenadas
     ***************************************************************************/
-    void timeVtk(ofstream &file, int const iStep, double const t) {
-
-      file << "FIELD FieldData 3" << endl;
-
-      //... passo de tempo
-      file << "CYCLE 1 1 int" << endl;
-      file << iStep << endl;
-
-      //... tempo em segundos
-      file << "TIME_S 1 1 double" << endl;
-      file << t << endl;
-
-      //... tempo em horas
-      file << "TIME_H 1 1 double" << endl;
-      file << t/3600.e0 << endl;
-
-    };
+    void coorVtk(ofstream &file, double *x, int const nNodes, short const ndm);
 
     /***************************************************************************
-    *@details Escreve as coordenadas
-    ***************************************************************************
-    ***************************************************************************
-    *@param file - Arquivo de escrita
-    ***************************************************************************
-    *@date      29/04/2021 - 29/04/2021
-    *@author    Henrique C. C. de Andrade
-    ***************************************************************************/
-    void coorVtk(ofstream &file, double *x, int const nNodes, short const ndm) {
-   
-      file << "POINTS " << nNodes << " double" << endl;
-      
-      if (ndm == 1) {
-        for (int i = 0; i < nNodes; i++) {
-          file << setprecision(7) << scientific << x[i] << " "
-               << setprecision(7) << scientific << 0.0 << " "
-               << setprecision(7) << scientific << 0.0 << " "
-               << endl; 
-        }         
-      }
-    
-    };
-
-    /***************************************************************************
-    *@details Escreve as coordenadas
-    ***************************************************************************
-    ***************************************************************************
-    *@param file - Arquivo de escrita
-    ***************************************************************************
-    *@date      29/04/2021 - 29/04/2021
-    *@author    Henrique C. C. de Andrade
+    *@brief Escreve as coordenadas
     ***************************************************************************/
     void cellsVtk(ofstream &file, int *cells, short *nNodesByCell,
-                 short *type,  int const nCells) {
+                 short *type,  int const nCells);
 
-      unsigned long aux = 0;
+    /***************************************************************************
+    *@bref Escreve propriedades 
+    ***************************************************************************/   
+    template<typename T> void propVtk(ofstream &file, T *p, string name,
+                                     int const n, short const gdl,
+                                     short const cod);
 
-      for (int i = 0; i < nCells; i++) {
-        aux += nNodesByCell[i] + 1;
-      }
-      
-      // ...
-      file << "CELLS " << nCells << " " << aux << endl;
-      for (int i = 0; i < nCells; i++) {
-        short nbc =nNodesByCell[i];
-        file << nbc << " ";
-        for(int j = 0; j < nbc; j ++){
-           int k = nbc*i + j;
-           file << cells[k] << " ";
-        }
-        file << endl;   
-      }
-      // ......................................................................
+    /***************************************************************************
+    *@details Inicia o campo de dados para celulas
+    ***************************************************************************
+    *@param file - Arquivo de escrita
+    *@param nCells - Número de células
+    ***************************************************************************
+    *@date      01/05/2021 - 01/05/2021
+    *@author    Henrique C. C. de Andrade
+    ***************************************************************************/
+    void cellData(ofstream &file, int const nCells) {
+      file << endl << "CELL_DATA " <<  nCells << endl;
+    }
 
-      // ...
+    /***************************************************************************
+    *@details Inicia o campo de dados para nodes   
+    ***************************************************************************
+    *@param file - Arquivo de escrita
+    *@param nNodes - Número de nós
+    ***************************************************************************
+    *@date      01/05/2021 - 01/05/2021
+    *@author    Henrique C. C. de Andrade
+    ***************************************************************************/
+    void pointData(ofstream &file, int const nNodes) {
+      file << endl << "POINT_DATA " << nNodes << endl;
+    }
+
+};
+
+/***************************************************************************
+ *@details Escreve propriedades
+ ***************************************************************************
+ *@param file - Arquivo de escrita
+ *@param cells - Conectividade nodal
+ *@param nNodesByCell - Número de nós por célula
+ *@param type - Tipo da célula
+ *@param nCells - Número de células
+ ***************************************************************************
+ *@date      29/04/2021 - 29/04/2021
+ *@author    Henrique C. C. de Andrade
+ ***************************************************************************/
+template<typename T> void VTK::propVtk(ofstream &file, T *p, string name,
+                                       int const n, short const gdl,
+                                       short const cod) {
+
+  string type;
+
+  if (typeid(T) == typeid(int))
+    type = "int";
+  else if (typeid(T) == typeid(double))
+    type = "double";
+  else {
+    exit(error::vtk);
+  }
+
+
+  switch (cod) {
+  case fieldVTK::scalarsVTK:
+    file << endl;
+    file << "SCALARS " << name << " " << type << " " << gdl << endl;
+    file << "LOOKUP_TABLE default " << endl;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < gdl; j++)
+        file << p[i*gdl + j];
       file << endl;
-      file << "CELL_TYPES " << nCells<< endl;
-      for (int i = 0; i < nCells; i++) {
-        short cod;
-        if(type[i] == typeCell::line)
-          cod = typeVTK::lineVTK;
-        file << cod << endl;;
-      }
-      // ......................................................................
+    }
 
-    };
 
+  }
 };
 
 

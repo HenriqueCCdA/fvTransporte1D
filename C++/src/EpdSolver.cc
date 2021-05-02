@@ -75,6 +75,7 @@ void EpdSolver::solver(void){
 void EpdSolver::init(void) {
 
   int nCells = mesh->get_cells().get_nCells();
+  int nNodes = mesh->get_nodes().get_nNodes();
   double u0 = mesh->get_ccci().get_cciValue();
   PropRef propRef = this->mesh->get_propRef();
 
@@ -85,7 +86,7 @@ void EpdSolver::init(void) {
   this->mesh->get_cells().set_u(u0, nCells);
 
   // ... iniciando os nodes
-  this->mesh->get_nodes().set_u(u0, nCells);
+  this->mesh->get_nodes().set_u(u0, nNodes);
 
   //
   this->intTemp->set_iStep(0);

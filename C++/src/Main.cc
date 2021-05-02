@@ -8,22 +8,24 @@
 #include"../include/GerenciadoDeMemoria.h"
 #include"../include/GlobalVar.h"
 #include"../include/Writer.h"
+#include"../include/Reader.h"
 
 int main(int argc, char *argv[]) {
 
   Files files;
   IntTemp intTemp;
   Mesh mesh(&intTemp);
+  Reader simple;
 
   // ... 
   files.set_nameIn("temperatura.dat");
-  files.read(mesh, intTemp);
+  simple.read(mesh, intTemp, files);
   mesh.display();
   // ............................................................................
 
   // ...
 //Writer *writer = new WriterTxt(&mesh, &intTemp, files.get_nameOut());
-  Writer *writer = new WriterVTK(&mesh, &intTemp, files.get_nameOut());
+  Writer *writer = new WriterVTK(&mesh, &intTemp, files.get_prefixNameOut());
   // ............................................................................
   // ... 
   DataStruct *data = new TriaDiagonal(mesh.get_nCells());

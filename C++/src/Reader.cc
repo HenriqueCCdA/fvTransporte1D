@@ -1,24 +1,22 @@
-#include"../include/Files.h"
+#include"../include/Reader.h"
 
  /******************************************************************************
   *@brief     Leitura do arquivo de entrada
   *@details   Leitura do arquivo. Neste arquivo definido as caracteristica  <!--
   *-->        da simulação               
   ******************************************************************************
-  *@date      18/04/2021 - 25/04/2021
+  *@date      2021 - 2021
   *@author    Henrique C. C. de Andrade
   *******************************************************************************/
-void Files::read(Mesh &mesh, IntTemp &intTemp) {
+void Reader::read(Mesh &mesh, IntTemp &intTemp, Files &files) {
   ifstream file;
-  string name = this->get_nameIn();
+  string name = files.get_nameIn();
 
   file.open(name, ios::in);
   if (!file.is_open()) {
     cout << name << " arquivo nao achado !" << endl;
     exit(error::fileNotFound);
   }
-
-  this->set_nameOut(name);
 
   string word;
   double dValue;
@@ -30,7 +28,7 @@ void Files::read(Mesh &mesh, IntTemp &intTemp) {
 
     if (word == "output") {
       file >> word;
-      this->set_nameOut(word);
+      files.set_prefixNameOut(word);
     }
 
     else if (word == "length") {

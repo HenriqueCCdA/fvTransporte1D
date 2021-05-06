@@ -29,7 +29,7 @@ void CellHeatLoop::montaSistema(void){
       ccdType = this->mesh->get_ccci().get_ccdType();
   double *cceValue = this->mesh->get_ccci().get_cceValue(),
          *ccdValue = this->mesh->get_ccci().get_ccdValue();
-  double *u = this->mesh->get_cells().get_u();
+  double *u = this->mesh->get_cells().get_fields()->get_u();
   // ... sistema de equacoes
   TriaDiagonal *triaDiagonal = (TriaDiagonal*) this->solver->get_dataStruct();
   double *aU = triaDiagonal->get_u(),

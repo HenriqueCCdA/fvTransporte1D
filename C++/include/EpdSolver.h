@@ -23,10 +23,10 @@ using namespace std;
  *@date      19 / 04 / 2021 - 25 / 04 / 2021
  *@author    Henrique C.C.de Andrade
  *******************************************************************************/
-class EpdSolver {
+template <class TField> class EpdSolver {
 
   private:
-    Mesh *mesh;          /**< Objeto para malha*/
+    Mesh<TField> *mesh;          /**< Objeto para malha*/
     IntTemp *intTemp;    /**< Objeto para integração temporal*/
     CellLoop *cellLoop;  /**< Objeto para loop nas células*/
     Solver *solverEq;    /**< Objeto para o solver do sistema de equações*/
@@ -47,7 +47,7 @@ class EpdSolver {
      *@date      19/04/2021 - 25/04/2021
      *@author    Henrique C. C. de Andrade
      ***************************************************************************/
-    EpdSolver(Mesh *mesh, IntTemp *intTemp,
+    EpdSolver(Mesh<TField> *mesh, IntTemp *intTemp,
               CellLoop *cellLoop, Solver *solver, Writer *writer) {
       this->mesh = mesh;
       this->intTemp = intTemp;      

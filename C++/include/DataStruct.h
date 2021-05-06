@@ -27,6 +27,11 @@ public:
   int get_n(void) { return n; };
   // ..........................................................................
 
+  virtual ~DataStruct() {
+    #ifdef DEBUG
+      std::cout << "Destrutor: " << typeid(this).name() << std::endl;
+    #endif // DEBUG 
+  };
 
 };
 
@@ -128,6 +133,11 @@ public:
    * @author    Henrique C. C. de Andrade
    *****************************************************************************/
   ~TriaDiagonal() {
+
+    #ifdef DEBUG
+      std::cout << "Destrutor: " << typeid(this).name() << std::endl;
+    #endif // DEBUG 
+    
     mem.dealloc<double>(&this->b);
     mem.dealloc<double>(&this->l);
     mem.dealloc<double>(&this->d);

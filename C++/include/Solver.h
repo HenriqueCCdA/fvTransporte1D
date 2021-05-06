@@ -71,5 +71,12 @@ class Solver {
      * @author    Henrique C. C. de Andrade
      ***************************************************************************/
     virtual double* solver(double *x)=0;
+
+
+    virtual ~Solver() {
+      #ifdef DEBUG
+        std::cout << "Destrutor: " << typeid(this).name() << endl;
+      #endif // DEBUG 
+    };
 };
 #endif

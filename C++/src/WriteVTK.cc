@@ -7,7 +7,8 @@
  *@date      19/04/2021 - 25/04/2021
  *@author    Henrique C. C. de Andrade
  ***************************************************************************/
-inline string WriterVTK::fullNameFile(void) {
+template <class TField> 
+inline string WriterVTK<TField>::fullNameFile(void) {
 
   string number = to_string(this->intTemp->get_iStep());
   string name = this->get_preName() + "_" + number + ".vtk";
@@ -23,7 +24,8 @@ inline string WriterVTK::fullNameFile(void) {
  *@date      19/04/2021 - 01/05/2021
  *@author    Henrique C. C. de Andrade
  ***************************************************************************/
-void WriterVTK::write(void) {
+template <class TField>
+void WriterVTK<TField>::write(void) {
 
   ofstream& file = this->get_fileOut();
   int nCells = this->mesh->get_cells().get_nCells();
@@ -55,7 +57,7 @@ void WriterVTK::write(void) {
   this->cellData(file, nCells);
 
   this->propVtk<double>(file,
-                this->mesh->get_cells().get_u(),
+                this->mesh->get_cells().get_fields()->get_u(),
                 "cellU",
                 nCells,
                 1,
@@ -83,7 +85,8 @@ void WriterVTK::write(void) {
  *@date      18/04/2021 - 27/04/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-void WriterVTK::openOutputFile(void) {
+template <class TField>
+void WriterVTK<TField>::openOutputFile(void) {
 
   string name = this->fullNameFile();
 
@@ -95,3 +98,7 @@ void WriterVTK::openOutputFile(void) {
   
 }
 /********************************************************************************/
+
+// ...
+template class WriterVTK<FieldDif>;
+// ...........................................................................

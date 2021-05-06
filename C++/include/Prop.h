@@ -43,7 +43,7 @@ class PropRef {
  *@brief     A Classe com as propriedade fisicas do dominio              
  *@details   A Classe com as propriedade fisicas do dominio 
  *******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
 
@@ -125,6 +125,9 @@ public:
 
   // ... Destrutor
   ~Prop() {
+    #ifdef DEBUG
+      std::cout << "Destrutor: " << typeid(this).name() << endl;
+    #endif // DEBUG    
     mem.dealloc<double>(&this->rho);
     mem.dealloc<double>(&this->cp);
     mem.dealloc<double>(&this->k);

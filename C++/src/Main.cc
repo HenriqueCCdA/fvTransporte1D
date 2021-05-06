@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
 
   Files files;
   IntTemp intTemp;
-  Mesh mesh(&intTemp);
-  Reader simple;
+  Mesh<FieldDif> mesh(&intTemp);
+  Reader<FieldDif> simple;
 
   // ... 
   files.set_nameIn("temperatura.dat");
@@ -24,9 +24,9 @@ int main(int argc, char *argv[]) {
   // ............................................................................
 
   // ...
-  Writers writers;
+  Writers<FieldDif> writers;
   Writer *writer = writers.select(&mesh, &intTemp, files.get_prefixNameOut()
-                                , typeWriters::VTK);
+                                , typeWriters::typeVTK);
   // ............................................................................
   // ... 
   DataStruct *data = new TriaDiagonal(mesh.get_nCells());
@@ -42,9 +42,9 @@ int main(int argc, char *argv[]) {
   // ............................................................................
 
   // 
-  EpdSolver epd(&mesh, &intTemp, heatCell1D, solver, writer);
+  EpdSolver<FieldDif> epd(&mesh, &intTemp, heatCell1D, solver, writer);
   // ............................................................................
-  
+
   //
   epd.init();
   // ............................................................................
@@ -64,6 +64,13 @@ int main(int argc, char *argv[]) {
        << fixed << setprecision(4) << times.get_solver() << endl
        << "Time Wres(s)   : " 
        << fixed << setprecision(4) << times.get_res() << endl;
+  // ............................................................................
+
+  // ... desinstanciando objetos
+  delete heatCell1D;
+  delete solver;
+  delete data;
+  delete writer;
   // ............................................................................
 
   return 0;

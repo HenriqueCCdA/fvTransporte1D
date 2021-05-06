@@ -1,5 +1,6 @@
 #pragma once
 
+#include"Fields.h"
 #include"Prop.h"
 #include"GerenciadoDeMemoria.h"
 
@@ -18,22 +19,23 @@ enum typeCell{
  *@date      19/04/2021 - 25/04/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-
-class Cells {
+template <class TField> class Cells {
 
   private:
     int nCells; /**< Número de células*/
     int *nodes; /**< Conectividades nodais das células Nodes[nCel,0] = no1 e Nodes[nCel,1] = no2*/
-    double *u;  /**< Valores do campo escalar*/
     double *xc; /**< Valores dos centroides*/
     short *nNodesByCell; /**< Numeros de nos por celula*/
     short *type; /**< Tipo da celula*/
     double dx;  /**< Comprimento das celulas*/
     Prop prop;  /**< Propriedades fisicas por células*/      
+    TField *fields; /**< Campo das variaveis*/ 
 
-  public:
+  public:    
 
     // ... setters
+    void set_fields(TField *fd) { this->fields = fd; };
+
     /***************************************************************************
      * @brief Seta o comprimento da células
      ***************************************************************************
@@ -54,23 +56,9 @@ class Cells {
      ***************************************************************************/
     void set_nCells(int d) { this->nCells = d; }
 
-    /***************************************************************************
-     * @brief Seta o valor inicial de u
-     ***************************************************************************
-     * @param d - valor 
-     * @param n - tamanho do arranjo 
-     ***************************************************************************
-     * @date      19/04/2021 - 25/04/2021
-     * @author    Henrique C. C. de Andrade
-     ***************************************************************************/
-    void set_u(double d, int n) {
-      for (int i = 0; i < n; i++) {
-        this->u[i] = d;
-      }
-    }
-    // ..........................................................................
+   // ... getters
+   TField* get_fields(void) { return this->fields; };
 
-    // ... getters
    /***************************************************************************
      * @brief Retorna o comprimento das células
      ***************************************************************************
@@ -110,16 +98,6 @@ class Cells {
     * @author    Henrique C. C. de Andrade
     ***************************************************************************/
     double* get_xc() { return this->xc; }
-
-    /***************************************************************************
-    * @brief Retorna o arranjos com os valores de u
-    ***************************************************************************
-    * @return - ponteiro o arranjos com os valores u 
-    ***************************************************************************
-    * @date      19/04/2021 - 25/04/2021
-    * @author    Henrique C. C. de Andrade
-    ***************************************************************************/
-    double* get_u() { return this->u; }
 
     /***************************************************************************
     * @brief Retorna o arranjos com os valores dos nos das células
@@ -170,7 +148,6 @@ class Cells {
       this->type         = mem.alloc<short>(n);
       this->nNodesByCell = mem.alloc<short>(n);
       this->xc = mem.alloc<double>(n);
-      this->u = mem.alloc<double>(n);
       this->nodes = mem.alloc<int>(2*n);
 
       this->prop.alloc(n);
@@ -188,12 +165,16 @@ class Cells {
      * @author    Henrique C. C. de Andrade
      ***************************************************************************/
     ~Cells() {
+
+      #ifdef DEBUG
+        std::cout << "Destrutor: " << typeid(this).name() << endl;
+      #endif // DEBUG     
+
       mem.dealloc<short>(&this->type);
       mem.dealloc<short>(&this->nNodesByCell);
       mem.dealloc<double>(&this->xc);
-      mem.dealloc<double>(&this->u);
       mem.dealloc<int>(&this->nodes);
-      this->prop.~Prop();
+//    this->prop.~Prop();
     }
     // ..........................................................................
 

@@ -14,14 +14,14 @@
  *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-class Reader{
+template <class TField> class Reader{
 
 public:
 
   /***************************************************************************
   *@brief Leitura do dados iniciais.
   ***************************************************************************/
-  void read(Mesh &mesh, IntTemp &intTemp, Files &files);
+  void read(Mesh<TField> &mesh, IntTemp &intTemp, Files &files);
 };
 
 

@@ -5,13 +5,13 @@
 *@details Procedimento principal da solução da EDP. Neste método e executado     <!--
 *-->      o fluxo principal de solução.
 *********************************************************************************
-*@date      19/04/2021 - 25/04/2021
+*@date      19/04/2021 - 05/05/2021
 *@author    Henrique C. C. de Andrade
 *********************************************************************************/
-void EpdSolver::solver(void){
+template <class TField> void EpdSolver<TField>::solver(void){
 
   int nStep = intTemp->get_nStep();
-  double *uCell = mesh->get_cells().get_u();
+  double *uCell = mesh->get_cells().get_fields()->get_u();
 
   // ...
   times.init_timer();
@@ -20,7 +20,7 @@ void EpdSolver::solver(void){
   // ............................................................................
 
   //
-  mesh->nodalInterpol();
+  this->mesh->nodalInterpol();
   // ............................................................................
 
   // ...
@@ -34,23 +34,23 @@ void EpdSolver::solver(void){
   for (int j = 0; j < nStep; j++) {
 
     // ...
-    intTemp->updateTime();
+    this->intTemp->updateTime();
     // ..........................................................................
 
     // ...
     times.init_timer();
-    cellLoop->montaSistema();
+    this->cellLoop->montaSistema();
     times.updateSistTimer();
     // ..........................................................................
 
     //... solver
     times.init_timer();
-    uCell = solverEq->solver(uCell);
+    uCell = this->solverEq->solver(uCell);
     times.updateSolverTimer();
     //...........................................................................
 
     // ... 
-    mesh->nodalInterpol();
+    this->mesh->nodalInterpol();
     //...........................................................................
 
     // ...
@@ -69,10 +69,10 @@ void EpdSolver::solver(void){
  *@details Inicialação dos dado para procedimento de solução da EDP. Esta função  <!--
  *<--      precisa ser chamada antes de método solver
  *********************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      19/04/2021 - 05/05/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-void EpdSolver::init(void) {
+template <class TField> void EpdSolver<TField>::init(void) {
 
   int nCells = mesh->get_cells().get_nCells();
   int nNodes = mesh->get_nodes().get_nNodes();
@@ -83,7 +83,7 @@ void EpdSolver::init(void) {
   this->mesh->get_cells().get_prop().init_prop(propRef, nCells);
 
   // ... iniciando as celulas
-  this->mesh->get_cells().set_u(u0, nCells);
+  this->mesh->get_cells().get_fields()->set_u(u0);
 
   // ... iniciando os nodes
   this->mesh->get_nodes().set_u(u0, nNodes);
@@ -93,3 +93,7 @@ void EpdSolver::init(void) {
   this->intTemp->set_t(0.0e0);
 }
 // ******************************************************************************
+
+// ...
+template class EpdSolver<FieldDif>;
+// ..............................................................................

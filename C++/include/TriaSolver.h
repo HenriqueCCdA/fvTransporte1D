@@ -76,6 +76,10 @@ class TriSolver : public Solver {
      * @author    Henrique C. C. de Andrade
      ***************************************************************************/
     ~TriSolver() {
+      #ifdef DEBUG
+        std::cout << "Destrutor: " << typeid(this).name() << endl;
+      #endif // DEBUG 
+     
       mem.dealloc<double>(&this->um);
       mem.dealloc<double>(&this->bm);
     }

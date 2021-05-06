@@ -6,7 +6,7 @@
  *@date      19/04/2021 - 25/04/2021
  *@author    Henrique C. C. de Andrade
  ***************************************************************************/
-void Mesh::display(void) {
+template <class TField> void Mesh<TField>::display(void) {
 
   cout << "**********************************************" << endl;
   cout << "Data:" << endl;
@@ -34,7 +34,7 @@ void Mesh::display(void) {
  *@date      19/04/2021 - 25/04/2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-void Mesh::alloc() {
+template <class TField> void Mesh<TField>::alloc() {
 
   // alocando os arranjos nodais
   this->nodes.alloc(this->nodes.get_nNodes());
@@ -51,7 +51,7 @@ void Mesh::alloc() {
  *@date      19/04/2021 - 25/04/2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-void Mesh::grid(void) {
+template <class TField> void Mesh<TField>::grid(void) {
 
   int nCells = this->cells.get_nCells();
   int nNodes = this->nodes.get_nNodes();
@@ -88,15 +88,16 @@ void Mesh::grid(void) {
 /******************************************************************************
  *@details Interpola valores das céluas para o nós.
  ******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-void Mesh::nodalInterpol(void) {
+template <class TField>
+void Mesh<TField>::nodalInterpol(void) {
   int nCells = this->get_nCells();
   int nNodes = this->get_nNodes();
   int *cells = this->get_cells().get_nodes();
   double *nodeU = this->get_nodes().get_u();
-  double *cellU = this->get_cells().get_u();
+  double *cellU = this->get_cells().get_fields()->get_u();
 
   // ...
   for (int i = 0; i < nNodes; i++)
@@ -126,3 +127,7 @@ void Mesh::nodalInterpol(void) {
   // ......................................................................
 }
 /*****************************************************************************/
+
+// ...
+template class Mesh<FieldDif>;
+// ............................................................................

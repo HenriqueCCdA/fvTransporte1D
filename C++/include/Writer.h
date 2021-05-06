@@ -9,8 +9,8 @@
 #include"../include/VTK.h"
 
 enum typeWriters {
-  TXT = 1,  /**< Tipo do arquivo texto.*/  
-  VTK = 2   /**< Tipo do arquivo VTK.*/
+  typeTXT = 1,  /**< Tipo do arquivo texto.*/
+  typeVTK = 2   /**< Tipo do arquivo VTK.*/
 };
 
 /*******************************************************************************
@@ -50,6 +50,7 @@ class Writer {
  *@date      19/04/2021 - 25/04/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
+template <class TField>
 class WriterTxt : public Writer {
 
 private:
@@ -58,7 +59,7 @@ private:
   ofstream fileOutCell;/**< Arquivo de escrita com os valores por célula*/
   ofstream fileOutNode;/**< Arquivo de escrita com os valores por nó*/
   IntTemp *intTemp;    /**< Objeto para integração temporal*/
-  Mesh    *mesh;       /**< Objeto para a malha*/
+  Mesh<TField> *mesh;       /**< Objeto para a malha*/
   bool    firstCall;   /**< Guarda a primeira vez que o write é chamado*/
 public:
   // ... Construtor
@@ -74,7 +75,7 @@ public:
    *@date      19/04/2021 - 25/04/2021
    *@author    Henrique C. C. de Andrade
    ***************************************************************************/
-  WriterTxt(Mesh* mesh, IntTemp* intTemp, string name) {
+  WriterTxt(Mesh<TField>* mesh, IntTemp* intTemp, string name) {
     this->mesh = mesh;
     this->intTemp = intTemp;
     this->set_preName(name);
@@ -106,22 +107,22 @@ public:
   /****************************************************************************
   *@brief Escreve os resultado nodais.
   *****************************************************************************/
-  void resNode(Mesh &mesh, IntTemp &intTemp);
+  void resNode(Mesh<TField> &mesh, IntTemp &intTemp);
 
   /****************************************************************************
   *@brief Escreve coordenada dos nós.
   *****************************************************************************/
-  void geomNode(Mesh &mesh);
+  void geomNode(Mesh<TField> &mesh);
 
   /****************************************************************************
   *@brief Escreve os resultado por células.
   *****************************************************************************/
-  void resCell(Mesh &mesh, IntTemp &intTemp);
+  void resCell(Mesh<TField> &mesh, IntTemp &intTemp);
 
   /******************************************************************************
   *@brief Escreve as coordenada dos centraiodes.
   ******************************************************************************/
-  void geomCell(Mesh &mesh);
+  void geomCell(Mesh<TField> &mesh);
   // ..........................................................................
 
   // ... getters
@@ -158,12 +159,13 @@ public:
  *@date      29/04/2021 - 29/04/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-class WriterVTK : public Writer, public VTK {
+template <class TField> 
+class WriterVTK : public VTK, public Writer{
 
 private:
   ofstream fileOut;    /**< Arquivo de escrita*/
   IntTemp *intTemp;    /**< Objeto para integração temporal*/
-  Mesh    *mesh;       /**< Objeto para a malha*/
+  Mesh<TField>    *mesh;       /**< Objeto para a malha*/
   bool    firstCall;   /**< Guarda a primeira vez que o write é chamado*/
 
   string fullNameFile(void);
@@ -182,7 +184,7 @@ public:
    *@date      19/04/2021 - 25/04/2021
    *@author    Henrique C. C. de Andrade
    ***************************************************************************/
-  WriterVTK(Mesh* mesh, IntTemp* intTemp, string name) {
+  WriterVTK(Mesh<TField>* mesh, IntTemp* intTemp, string name) {
     this->mesh = mesh;
     this->intTemp = intTemp;
     this->set_preName(name);
@@ -235,11 +237,9 @@ public:
 *@date      19/04/2021 - 25/04/2021
 *@author    Henrique C. C. de Andrade
 ***************************************************************************/
-class Writers {
+template <class TField> class Writers {
 
-public:
-
-
+  public:
   /***************************************************************************
   *@details Seleciona a classe com o tipo de arquivo escolhido.
   ***************************************************************************
@@ -248,32 +248,29 @@ public:
   *@param name     - O prefixo do arquivo de saida
   *@param cod      - Tipo do arquivo de saida
   ***************************************************************************
-  *@date      19/04/2021 - 25/04/2021
+  *@date      2021 - 2021
   *@author    Henrique C. C. de Andrade
   ***************************************************************************/
-  Writer* select(Mesh* mesh, IntTemp* intTemp, string name, int cod) {
+    Writer* select(Mesh<TField>* mesh, IntTemp* intTemp, string name, int cod) {
 
-    switch (cod){
+      switch (cod){
 
       // ... Arquivo txt
-      case typeWriters::TXT:
-        return new WriterTxt(mesh, intTemp, name);
+        case typeWriters::typeTXT:
+          return new WriterTxt<TField>(mesh, intTemp, name);
       
       // ... Arquivo VTK
-      case typeWriters::VTK:
-        return new WriterVTK(mesh, intTemp, name);        
+        case typeWriters::typeVTK:
+          return new WriterVTK<TField>(mesh, intTemp, name);
 
-      default:
-        cout<<"Tipo do arquivo de saida invalido!!" << endl;
-        exit(typeOutFile);
-    }
-    return nullptr;
-  };
+        default:
+          cout<<"Tipo do arquivo de saida invalido!!" << endl;
+          exit(typeOutFile);
+      }
+      return nullptr;
+    };
 
 };
-
-
-
-
+// ............................................................................
 
 #endif

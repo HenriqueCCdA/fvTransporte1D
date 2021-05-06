@@ -8,7 +8,8 @@
   *@date      2021 - 2021
   *@author    Henrique C. C. de Andrade
   *******************************************************************************/
-void Reader::read(Mesh &mesh, IntTemp &intTemp, Files &files) {
+template <class TField> 
+void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
   ifstream file;
   string name = files.get_nameIn();
 
@@ -116,3 +117,6 @@ void Reader::read(Mesh &mesh, IntTemp &intTemp, Files &files) {
 }
 /******************************************************************************/
 
+// ...
+template class Reader<FieldDif>;
+// ............................................................................

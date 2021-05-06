@@ -6,10 +6,11 @@ static void writeResLine(ofstream &file, int c1, double c2, double *cs, int nCs)
  *@details Escreve os resultados. A primeira vez que e chama é escrita      <!--
  *-->      a geometria. Apartir da segunda são escritos os resultados.
  ***************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ***************************************************************************/
-void WriterTxt::write(void){
+template <class TField>
+void WriterTxt<TField>::write(void){
 
   // ... geometria
   if (this->firstCall) {
@@ -29,10 +30,11 @@ void WriterTxt::write(void){
 /******************************************************************************
  *@details Escreve os resultado nodais.
  ******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-void WriterTxt::resNode(Mesh &Mesh, IntTemp &intTemp) {
+template <class TField>
+void WriterTxt<TField>::resNode(Mesh<TField> &Mesh, IntTemp &intTemp) {
 
   writeResLine(this->fileOutNode, intTemp.get_iStep(), intTemp.get_t(),
     Mesh.get_nodes().get_u(), Mesh.get_nNodes());
@@ -43,10 +45,11 @@ void WriterTxt::resNode(Mesh &Mesh, IntTemp &intTemp) {
 /******************************************************************************
  *@details Escreve coordenada dos nós.
  ******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-void WriterTxt::geomNode(Mesh &mesh) {
+template <class TField>
+void WriterTxt<TField>::geomNode(Mesh<TField> &mesh) {
 
   writeResLine(this->fileOutNode, 0, 0.0, mesh.get_nodes().get_x()
     , mesh.get_nNodes());
@@ -57,13 +60,16 @@ void WriterTxt::geomNode(Mesh &mesh) {
 /******************************************************************************
  *@details  Escreve os resultado por células.
  ******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-void WriterTxt::resCell(Mesh &mesh, IntTemp &intTemp) {
+template <class TField>
+void WriterTxt<TField>::resCell(Mesh<TField> &mesh, IntTemp &intTemp) {
+
+  double *u = mesh.get_cells().get_fields()->get_u();
 
   writeResLine(this->fileOutCell, intTemp.get_iStep(), intTemp.get_t(),
-    mesh.get_cells().get_u(), mesh.get_nCells());
+               u, mesh.get_nCells());
 
 }
 /******************************************************************************/
@@ -71,10 +77,11 @@ void WriterTxt::resCell(Mesh &mesh, IntTemp &intTemp) {
 /******************************************************************************
  *@details Escreve as coordenada dos centraiodes.
  ******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-void WriterTxt::geomCell(Mesh &mesh) {
+template <class TField>
+void WriterTxt<TField>::geomCell(Mesh<TField> &mesh) {
 
   writeResLine(this->fileOutCell, 0, 0.0, mesh.get_cells().get_xc()
     , mesh.get_nCells());
@@ -89,8 +96,8 @@ void WriterTxt::geomCell(Mesh &mesh) {
  *@date      18/04/2021 - 27/04/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-void WriterTxt::openOutputFile(void) {
-
+template <class TField>
+void WriterTxt<TField>::openOutputFile(void) {
 
   string name = this->get_preName() + "_node.c++";
 
@@ -125,3 +132,7 @@ static void writeResLine(ofstream &file, int c1, double c2, double *cs, int nCs)
   }
   file << endl;
 }
+
+// ...
+template class WriterTxt<FieldDif>;
+// ............................................................................

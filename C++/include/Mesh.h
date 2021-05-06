@@ -23,12 +23,12 @@ using namespace std;
  *@date      19/04/2021 - 25/04/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-class Mesh{
+template <class TField> class Mesh{
   
   private:
     double l;    /**< Dimensção do dominio*/
-    Nodes nodes; /**< Nos da malha*/
-    Cells cells; /**< Céluas  da malha*/ 
+    Nodes<TField> nodes; /**< Nos da malha*/
+    Cells<TField> cells; /**< Céluas  da malha*/
     CcCi  ccci;  /**< Condicoes de contorno*/
     IntTemp *intTemp;
     PropRef propRef;  
@@ -42,9 +42,9 @@ class Mesh{
     // ... getters
     PropRef& get_propRef(void) { return this->propRef; }
 
-    Cells& get_cells(void) { return this->cells; }
+    Cells<TField>& get_cells(void) { return this->cells; }
 
-    Nodes& get_nodes(void) { return this->nodes; }
+    Nodes<TField>& get_nodes(void) { return this->nodes; }
 
     CcCi& get_ccci(void) { return this->ccci; }
 
@@ -63,12 +63,12 @@ class Mesh{
     /***************************************************************************
      *@brief Mostra informações importantes da malha.
      ***************************************************************************/
-    void display(void); 
+    void display(void);
 
     /***************************************************************************
      *@brief Aloca a memoria necessaria.
     ***************************************************************************/
-    void alloc(); 
+    void alloc();
 
     /***************************************************************************
     *@brief Gera o grid.
@@ -78,7 +78,8 @@ class Mesh{
     /***************************************************************************
     *@brief Interpola valores das céluas para o nós.
     ***************************************************************************/
-    void nodalInterpol(void);    
+    void nodalInterpol(void);
 };
 
 #endif
+

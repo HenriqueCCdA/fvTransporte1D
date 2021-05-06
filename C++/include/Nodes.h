@@ -14,17 +14,22 @@ using namespace std;
  *@details   Esta classe tema as informção e funcionalidades para lidar com     <--
  *<--        os nós.
  *******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-class Nodes{
+template <class TField>class Nodes{
 
   private:
     int nNodes; /**< Número de nós*/
     double *x;  /**< Coordenada nodais*/
     double *u;  /**< Valores do campo escalor por de nós*/
+    TField *fields; 
 
   public:
+
+    TField* get_fields(void) { return this->fields; };
+    void set_fields(TField *fd) { this->fields = fd; };
+
     // ... setters
     void set_nNodes(int d) { this->nNodes = d; }
 
@@ -69,6 +74,9 @@ class Nodes{
      * @author    Henrique C. C. de Andrade
      ***************************************************************************/
     ~Nodes() {
+      #ifdef DEBUG
+        std::cout << "Destrutor: " << typeid(this).name() << endl;
+      #endif // DEBUG
       mem.dealloc<double>(&this->x);
       mem.dealloc<double>(&this->u);
     }

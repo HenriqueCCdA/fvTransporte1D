@@ -11,7 +11,7 @@
 template <class TField> void EpdSolver<TField>::solver(void){
 
   int nStep = intTemp->get_nStep();
-  double *uCell = mesh->get_cells().get_fields()->get_u();
+  double *uCell = mesh->get_cells().get_fields().get_u();
 
   // ...
   times.init_timer();
@@ -83,10 +83,10 @@ template <class TField> void EpdSolver<TField>::init(void) {
   this->mesh->get_cells().get_prop().init_prop(propRef, nCells);
 
   // ... iniciando as celulas
-  this->mesh->get_cells().get_fields()->set_u(u0);
+  this->mesh->get_cells().get_fields().set_u(u0);
 
   // ... iniciando os nodes
-  this->mesh->get_nodes().get_fields()->set_u(u0);
+  this->mesh->get_nodes().get_fields().set_u(u0);
 
   //
   this->intTemp->set_iStep(0);

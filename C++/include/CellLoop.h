@@ -63,24 +63,22 @@ class CellHeatLoop: public CellLoop{
     CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTemp) {
       this->solver = solver;
       this->mesh = mesh;
-      this->intTemp = intTemp;                 
-      FieldDif *fd;
+      this->intTemp = intTemp;       
+      int n;          
       // ... campo de variaveis por celula
-      fd = new FieldDif();
-      fd->set_n(mesh->get_nCells());
-      fd->set_ndf(1);
-      fd->set_ndm(1);
-      fd->alloc();
-      this->mesh->get_cells().set_fields(fd);
+      n = mesh->get_nCells();
+      this->mesh->get_cells().get_fields().set_n(n);
+      this->mesh->get_cells().get_fields().set_ndf(1);
+      this->mesh->get_cells().get_fields().set_ndm(1);
+      this->mesh->get_cells().get_fields().alloc();
       // ......................................................................
       
       // ... campo de variaveis por no
-      fd = new FieldDif();
-      fd->set_n(mesh->get_nNodes());
-      fd->set_ndf(1);
-      fd->set_ndm(1);
-      fd->alloc();
-      this->mesh->get_nodes().set_fields(fd);
+      n = mesh->get_nNodes();
+      this->mesh->get_nodes().get_fields().set_n(n);
+      this->mesh->get_nodes().get_fields().set_ndf(1);
+      this->mesh->get_nodes().get_fields().set_ndm(1);
+      this->mesh->get_nodes().get_fields().alloc();
       // ......................................................................
 
     }
@@ -91,8 +89,6 @@ class CellHeatLoop: public CellLoop{
       #ifdef DEBUG
         std::cout << "Destrutor: " << typeid(this).name() << endl;
       #endif // DEBUG  
-      delete this->mesh->get_cells().get_fields();
-      delete this->mesh->get_nodes().get_fields();
     }
 
 

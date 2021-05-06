@@ -57,7 +57,7 @@ void WriterVTK<TField>::write(void) {
   this->cellData(file, nCells);
 
   this->propVtk<double>(file,
-                this->mesh->get_cells().get_fields()->get_u(),
+                this->mesh->get_cells().get_fields().get_u(),
                 "cellU",
                 nCells,
                 1,
@@ -67,7 +67,7 @@ void WriterVTK<TField>::write(void) {
   this->pointData(file, nNodes);
 
   this->propVtk<double>(file,
-                      this->mesh->get_nodes().get_fields()->get_u(),
+                      this->mesh->get_nodes().get_fields().get_u(),
                       "nodeU",
                       nNodes,
                       1,

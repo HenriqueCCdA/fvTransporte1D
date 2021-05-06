@@ -29,12 +29,11 @@ template <class TField> class Cells {
     short *type; /**< Tipo da celula*/
     double dx;  /**< Comprimento das celulas*/
     Prop prop;  /**< Propriedades fisicas por células*/      
-    TField *fields; /**< Campo das variaveis*/ 
+    TField fields; /**< Campo das variaveis*/ 
 
   public:    
 
     // ... setters
-    void set_fields(TField *fd) { this->fields = fd; };
 
     /***************************************************************************
      * @brief Seta o comprimento da células
@@ -57,7 +56,7 @@ template <class TField> class Cells {
     void set_nCells(int d) { this->nCells = d; }
 
    // ... getters
-   TField* get_fields(void) { return this->fields; };
+   TField& get_fields(void) { return this->fields; };
 
    /***************************************************************************
      * @brief Retorna o comprimento das células

@@ -22,12 +22,11 @@ template <class TField>class Nodes{
   private:
     int nNodes; /**< Número de nós*/
     double *x;  /**< Coordenada nodais*/
-    TField *fields; /**< Campo das variaveis*/ 
+    TField fields; /**< Campo das variaveis*/ 
 
   public:
 
-    TField* get_fields(void) { return this->fields; };
-    void set_fields(TField *fd) { this->fields = fd; };
+    TField& get_fields(void) { return this->fields; };
 
     // ... setters
     void set_nNodes(int d) { this->nNodes = d; }

@@ -35,7 +35,7 @@ void WriterTxt<TField>::write(void){
  ******************************************************************************/
 template <class TField>
 void WriterTxt<TField>::resNode(Mesh<TField> &Mesh, IntTemp &intTemp) {
-  double *u = mesh->get_nodes().get_fields()->get_u();
+  double *u = mesh->get_nodes().get_fields().get_u();
   writeResLine(this->fileOutNode, intTemp.get_iStep(), intTemp.get_t(),
                u, Mesh.get_nNodes());
 
@@ -66,7 +66,7 @@ void WriterTxt<TField>::geomNode(Mesh<TField> &mesh) {
 template <class TField>
 void WriterTxt<TField>::resCell(Mesh<TField> &mesh, IntTemp &intTemp) {
 
-  double *u = mesh.get_cells().get_fields()->get_u();
+  double *u = mesh.get_cells().get_fields().get_u();
 
   writeResLine(this->fileOutCell, intTemp.get_iStep(), intTemp.get_t(),
                u, mesh.get_nCells());

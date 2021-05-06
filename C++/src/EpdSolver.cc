@@ -86,7 +86,7 @@ template <class TField> void EpdSolver<TField>::init(void) {
   this->mesh->get_cells().get_fields()->set_u(u0);
 
   // ... iniciando os nodes
-  this->mesh->get_nodes().set_u(u0, nNodes);
+  this->mesh->get_nodes().get_fields()->set_u(u0);
 
   //
   this->intTemp->set_iStep(0);

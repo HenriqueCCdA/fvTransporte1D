@@ -96,7 +96,7 @@ void Mesh<TField>::nodalInterpol(void) {
   int nCells = this->get_nCells();
   int nNodes = this->get_nNodes();
   int *cells = this->get_cells().get_nodes();
-  double *nodeU = this->get_nodes().get_u();
+  double *nodeU = this->get_nodes().get_fields()->get_u();
   double *cellU = this->get_cells().get_fields()->get_u();
 
   // ...

@@ -35,9 +35,9 @@ void WriterTxt<TField>::write(void){
  ******************************************************************************/
 template <class TField>
 void WriterTxt<TField>::resNode(Mesh<TField> &Mesh, IntTemp &intTemp) {
-
+  double *u = mesh->get_nodes().get_fields()->get_u();
   writeResLine(this->fileOutNode, intTemp.get_iStep(), intTemp.get_t(),
-    Mesh.get_nodes().get_u(), Mesh.get_nNodes());
+               u, Mesh.get_nNodes());
 
 }
 /******************************************************************************/

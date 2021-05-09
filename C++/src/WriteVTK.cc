@@ -21,7 +21,7 @@ inline string WriterVTK<TField>::fullNameFile(void) {
  *@details Escreve os resultados. A primeira vez que e chama é escrita      <!--
  *-->      a geometria. Apartir da segunda são escritos os resultados.
  ***************************************************************************
- *@date      19/04/2021 - 01/05/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ***************************************************************************/
 template <class TField>
@@ -59,6 +59,13 @@ void WriterVTK<TField>::write(void) {
   this->propVtk<double>(file,
                 this->mesh->get_cells().get_fields().get_u(),
                 "cellU",
+                nCells,
+                1,
+                fieldVTK::scalarsVTK);
+
+  this->propVtk<double>(file,
+                this->mesh->get_cells().get_fields().get_gradU(),
+                "cellGradU",
                 nCells,
                 1,
                 fieldVTK::scalarsVTK);

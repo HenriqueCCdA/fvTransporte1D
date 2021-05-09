@@ -15,7 +15,7 @@ enum cc { cce = 1, ccd = 2 };
  *@brief   A Classe loop nas células.
  *@details A Classe loop nas células e uma classe generica.
  ******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
 class CellLoop {
@@ -23,6 +23,7 @@ class CellLoop {
   public:
 
     virtual void montaSistema(void)=0;
+    virtual void gradients(void)=0;
 
     virtual ~CellLoop(){
       #ifdef DEBUG
@@ -51,46 +52,32 @@ class CellHeatLoop: public CellLoop{
     Mesh<FieldDif> *mesh;       /**< malha do problema*/
     IntTemp *intTemp; /**< Integração numerica temporal*/ 
 
+    /********************************************************************************
+    *@brief Calcula do gradiente na face do contorno.
+    ********************************************************************************/
+    double boundaryGrad(short const ccType, const double* const aCcValue,
+                        double const uP, double const uV,
+                        double const coefDif, double gradU0,
+                        double const dx, double const dFace,
+                        double const dir);
+
+
   public:
 
     /***************************************************************************
      *@brief Contrutor
-     *@details Este construtor recebe um ponteiro para solver, mesh e intTemp. <!--
-     **************************************************************************
-     *@date      2021 - 2021
-     *@author    Henrique C. C. de Andrade
-     ***************************************************************************/
-    CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTemp) {
-      this->solver = solver;
-      this->mesh = mesh;
-      this->intTemp = intTemp;       
-      int n;          
-      // ... campo de variaveis por celula
-      n = mesh->get_nCells();
-      this->mesh->get_cells().get_fields().set_n(n);
-      this->mesh->get_cells().get_fields().set_ndf(1);
-      this->mesh->get_cells().get_fields().set_ndm(1);
-      this->mesh->get_cells().get_fields().alloc();
-      // ......................................................................
-      
-      // ... campo de variaveis por no
-      n = mesh->get_nNodes();
-      this->mesh->get_nodes().get_fields().set_n(n);
-      this->mesh->get_nodes().get_fields().set_ndf(1);
-      this->mesh->get_nodes().get_fields().set_ndm(1);
-      this->mesh->get_nodes().get_fields().alloc();
-      // ......................................................................
-
-    }
+    /***************************************************************************/
+    CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTemp);
 
     void montaSistema(void) override;
+
+    void gradients(void) override;    
 
     ~CellHeatLoop(){
       #ifdef DEBUG
         std::cout << "Destrutor: " << typeid(this).name() << endl;
       #endif // DEBUG  
     }
-
 
 };
 #endif

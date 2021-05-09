@@ -20,11 +20,11 @@ using namespace std;
  *******************************************************************************
  *@brief   Classe para a malha.
  *******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
 template <class TField> class Mesh{
-  
+
   private:
     double l;    /**< Dimensção do dominio*/
     Nodes<TField> nodes; /**< Nos da malha*/

@@ -5,6 +5,38 @@ static void cc(double &aL, double &aD, double &aU, double &b
       , double dx, double dt, double u
       , short ccType, double *aCcValue, short c);
 
+
+/***************************************************************************
+*@details Este construtor recebe um ponteiro para solver, mesh e intTemp.  
+****************************************************************************
+*@date      2021 - 2021
+*@author    Henrique C. C. de Andrade
+***************************************************************************/
+CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTemp) {
+  this->solver = solver;
+  this->mesh = mesh;
+  this->intTemp = intTemp;
+  int n;
+  // ... campo de variaveis por celula
+  n = mesh->get_nCells();
+  this->mesh->get_cells().get_fields().set_n(n);
+  this->mesh->get_cells().get_fields().set_ndf(1);
+  this->mesh->get_cells().get_fields().set_ndm(1);
+  this->mesh->get_cells().get_fields().alloc();
+  // ......................................................................
+
+  // ... campo de variaveis por no
+  n = mesh->get_nNodes();
+  this->mesh->get_nodes().get_fields().set_n(n);
+  this->mesh->get_nodes().get_fields().set_ndf(1);
+  this->mesh->get_nodes().get_fields().set_ndm(1);
+  this->mesh->get_nodes().get_fields().alloc();
+  // ......................................................................
+
+}
+
+
+
 /********************************************************************************
  *@brief     Monta o sistema de equações atraves do loop nas celulas.
  *@details   Monta o sistema de equações atraves do loop nas celulas. <!--
@@ -77,6 +109,53 @@ void CellHeatLoop::montaSistema(void){
 //*****************************************************************************
 
 /********************************************************************************
+ *@brief     Caculo do gradiente                                      
+ *@details   Cacula o gradiente da propriedade U                          
+ ********************************************************************************
+ *@date      2021 - 2021                    
+ *@author    Henrique C. C. de Andrade
+ ********************************************************************************/
+void CellHeatLoop::gradients(void) {
+  
+  // ...
+  const double* const coefDif = this->mesh->get_cells().get_prop().get_k();
+  // ...
+  double const dx = this->mesh->get_cells().get_dx();
+  // ...
+  int const cceType = this->mesh->get_ccci().get_cceType(),
+    ccdType = this->mesh->get_ccci().get_ccdType();
+  const double* const cceValue = this->mesh->get_ccci().get_cceValue(),
+                      *ccdValue = this->mesh->get_ccci().get_ccdValue();
+  const double* const u = this->mesh->get_cells().get_fields().get_u();
+  double* const gradU = this->mesh->get_cells().get_fields().get_gradU();
+  // ...
+  int nCells = this->mesh->get_nCells();
+  // ..........................................................................
+
+  // ... Lado esquerdo
+  gradU[0] = this->boundaryGrad(cceType    , cceValue, u[0], u[1]
+                                , coefDif[0],gradU[0]
+                                , dx        , 0.5e0*dx
+                                , -1.0);
+  // ... Lado direito
+  int n = nCells - 1;
+  gradU[n] = this->boundaryGrad(ccdType, ccdValue, u[n], u[n-1]
+                          , coefDif[n], gradU[n]
+                          , dx        ,-0.5e0*dx
+                          , 1.0);
+  // ..........................................................................
+
+
+  // ... loop nas celulas do interios
+  for (int i = 1; i < nCells - 1; i++) {
+    gradU[i] = 0.5e0*(u[i+1] - u[i-1])/dx;
+  }
+  // ..........................................................................
+}
+//*****************************************************************************
+
+
+/********************************************************************************
  *@brief     Função auxiliar para aplicar as condições de contorno.
  *@details   Função auxiliar para aplicar as condições de contorno.
  ********************************************************************************
@@ -138,5 +217,57 @@ static void cc(double &aL, double &aD, double &aU, double &b
   // c ...
   b = sU + aP0 * u;
   // ............................................................................
+}
+/******************************************************************************/
+
+
+/********************************************************************************
+ *@details     Calcula do gradiente na face do contorno.              
+ ********************************************************************************
+ *@param   ccType  - tipo da condicao de contorno
+ *@param   ccValue - parametros da condicao de contorno
+ *@param   dx      - tamanho da celula
+ *@param   uP      - valor da solução na celula central             
+ *@param   uV      - valor da solução na celula vizinha
+ *@param   coefDif - coeficiente de difusao da celula central
+ *@param   gradU0  - gradiente na celula centra no passo anterior
+ *@param   dx      - tamanho da celula
+ *@param   dFace   - distancia ate a face
+ *@param   dir     - normal extrena (1 ou - 1)
+ ********************************************************************************
+ *@date      2021 - 2021
+ *@author    Henrique C. C. de Andrade
+ *******************************************************************************/
+double CellHeatLoop::boundaryGrad(short const ccType  , const double* const aCcValue,
+                                   double const uP     , double const uV,
+                                   double const coefDif, double gradU0,
+                                   double const dx     ,double const dFace,
+                                   double const dir){
+  double uB=uP, uF;
+  double gradU,q, qn;
+
+  if (ccType == typeCc::temp) {
+    uB = aCcValue[0];
+  }
+  else if (ccType == typeCc::flux) {
+    qn = aCcValue[0];
+    q = aCcValue[0]*dir;
+    gradU = -q / coefDif;
+    uB = uP - gradU*dFace;
+  }
+  else if (ccType == typeCc::hConv) {
+    double h = aCcValue[1];
+    double tA = aCcValue[0];
+    double tS;
+   
+    tS = uP;
+    qn = -h * (tA - tS);
+    q = qn * dir;
+    gradU = -q / coefDif;
+    uB = uP - gradU * dFace;
+  }
+  
+  uF = 0.5e0*(uP + uV);
+  return dir * (uB - uF) / dx;
 }
 /******************************************************************************/

@@ -55,11 +55,13 @@ class FieldDif : public Field {
   private:
     double *u;    /**< Campo U*/
     double *gradU;/**< Campo gradiente do campo U*/
+    double *flux; /**< Campo gradiente do flux*/
 
   public:
 
     double* get_u(void){ return this->u;};
-    double* get_gradU(void) { return this->gradU; };
+    double* get_gradU(void) { return this->gradU;};
+    double* get_flux(void) { return this->flux;};
 
     void set_u(double const value) {
       for (int i = 0; i < this->get_n(); i++) {
@@ -76,7 +78,8 @@ class FieldDif : public Field {
     void alloc(void) override{
       int n = this->get_n();
       this->u = mem.alloc<double>(n);
-      this->gradU = mem.alloc<double>(n);      
+      this->gradU = mem.alloc<double>(n);  
+      this->flux = mem.alloc<double>(n);
     };
 
     ~FieldDif() {
@@ -85,6 +88,7 @@ class FieldDif : public Field {
       #endif // DEBUG  
       mem.dealloc<double>(&this->u);
       mem.dealloc<double>(&this->gradU);
+      mem.dealloc<double>(&this->flux);
     }
 
 };

@@ -58,34 +58,48 @@ void WriterVTK<TField>::write(void) {
 
   this->propVtk<double>(file,
                 this->mesh->get_cells().get_fields().get_u(),
-                "cellU",
+                "cU",
                 nCells,
                 1,
                 fieldVTK::scalarsVTK);
 
   this->propVtk<double>(file,
                 this->mesh->get_cells().get_fields().get_gradU(),
-                "cellGradU",
+                "cGradU",
                 nCells,
                 1,
                 fieldVTK::scalarsVTK);
+
+  this->propVtk<double>(file,
+                        this->mesh->get_cells().get_fields().get_flux(),
+                        "cFlux",
+                        nCells,
+                        1,
+                        fieldVTK::scalarsVTK);
 
   // ... Campo por Pontos
   this->pointData(file, nNodes);
 
   this->propVtk<double>(file,
                       this->mesh->get_nodes().get_fields().get_u(),
-                      "nodeU",
+                      "nU",
                       nNodes,
                       1,
                       fieldVTK::scalarsVTK);
 
   this->propVtk<double>(file,
                         this->mesh->get_nodes().get_fields().get_gradU(),
-                        "nodeGradU",
+                        "nGradU",
                          nNodes,
                          1,
                          fieldVTK::scalarsVTK);
+
+  this->propVtk<double>(file,
+                        this->mesh->get_nodes().get_fields().get_flux(),
+                        "nFlux",
+                        nNodes,
+                        1,
+                        fieldVTK::scalarsVTK);
 
   // ... fechando o arquivo
   this->closeOutputFile();

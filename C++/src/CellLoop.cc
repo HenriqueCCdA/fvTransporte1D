@@ -154,6 +154,32 @@ void CellHeatLoop::gradients(void) {
 }
 //*****************************************************************************
 
+/********************************************************************************
+ *@brief     Caculo do fluxo     
+ *@details   Caculo do flux de u
+ ********************************************************************************
+ *@date      2021 - 2021
+ *@author    Henrique C. C. de Andrade
+ ********************************************************************************/
+void CellHeatLoop::flux(void) {
+
+  // ...
+  const double* const coefDif = this->mesh->get_cells().get_prop().get_k();
+  const double* const u = this->mesh->get_cells().get_fields().get_u();
+  const double* const gradU = this->mesh->get_cells().get_fields().get_gradU();
+  double* const flux = this->mesh->get_cells().get_fields().get_flux();
+  // ...
+  int nCells = this->mesh->get_nCells();
+  // ..........................................................................
+
+  // ... loop nas celulas do interios
+  for (int i = 0; i < nCells; i++) {
+    flux[i] = -coefDif[i]*gradU[i];
+  }
+  // ..........................................................................
+}
+//*****************************************************************************
+
 
 /********************************************************************************
  *@brief     Função auxiliar para aplicar as condições de contorno.

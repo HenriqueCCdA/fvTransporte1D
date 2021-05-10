@@ -24,6 +24,7 @@ class CellLoop {
 
     virtual void montaSistema(void)=0;
     virtual void gradients(void)=0;
+    virtual void flux(void)=0;
 
     virtual ~CellLoop(){
       #ifdef DEBUG
@@ -71,7 +72,9 @@ class CellHeatLoop: public CellLoop{
 
     void montaSistema(void) override;
 
-    void gradients(void) override;    
+    void gradients(void) override;   
+
+    void flux(void) override;
 
     ~CellHeatLoop(){
       #ifdef DEBUG

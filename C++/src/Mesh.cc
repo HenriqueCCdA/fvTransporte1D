@@ -113,7 +113,13 @@ void Mesh<TField>::nodalInterpol(void) {
   const double* const cGradU = this->get_cells().get_fields().get_gradU();
 
   this->nodes.interpol(nGradU, cGradU, cells, nNodes, nCells);
-  // ...
+  // ......................................................................
+
+  // ... interpolacao de gradU
+  double* const nFlux = this->get_nodes().get_fields().get_flux();
+  const double* const cFlux = this->get_cells().get_fields().get_flux();
+
+  this->nodes.interpol(nFlux, cFlux, cells, nNodes, nCells);
   // ......................................................................
 
 }

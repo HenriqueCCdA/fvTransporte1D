@@ -1,11 +1,5 @@
 #include"../include/CellLoop.h"
 
-static void cc(double &aL, double &aD, double &aU, double &b
-      , double rho, double cp, double kP, double kV
-      , double dx, double dt, double u
-      , short ccType, double *aCcValue, short c);
-
-
 /***************************************************************************
 *@details Este construtor recebe um ponteiro para solver, mesh e intTemp.  
 ****************************************************************************
@@ -73,19 +67,19 @@ void CellHeatLoop::montaSistema(void){
   // ..........................................................................
 
   // ... Lado esquerdo
-  cc(aL[0]  , aD[0], aU[0], b[0],
-     rho[0] , cp[0], k[0] , k[1],
-     dx     , dt   , u[0],  
-     cceType, cceValue, cce);
+  this->boundaryCell(aL[0]  , aD[0], aU[0], b[0],
+                     rho[0] , cp[0], k[0] , k[1],
+                     dx     , dt   , u[0],  
+                     cceType, cceValue, cce);
   // ............................................................................
 
 
   // ... Lado direito
   n = nCells - 1;
-  cc(aL[n] , aD[n]   , aU[n], b[n],
-    rho[n] , cp[n]   ,  k[n], k[n-1],
-    dx     , dt      , u[n],
-    ccdType, ccdValue, ccd);
+  this->boundaryCell(aL[n] , aD[n]   , aU[n], b[n],
+                     rho[n] , cp[n]   ,  k[n], k[n-1],
+                     dx     , dt      , u[n],
+                     ccdType, ccdValue, ccd);
   // ............................................................................
  
   // ... loop nas celulas do interios
@@ -203,10 +197,10 @@ void CellHeatLoop::flux(void) {
  *@date      19/04/2021 - 24/04/2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-static void cc(double &aL, double &aD, double &aU, double &b
-             , double rho, double cp, double kP, double kV
-             , double dx, double dt, double u
-             , short ccType, double *aCcValue, short c) {
+void CellHeatLoop::boundaryCell(double &aL, double &aD, double &aU, double &b
+                              , double rho, double cp, double kP, double kV
+                              , double dx, double dt, double u
+                              , short ccType, double *aCcValue, short c) {
 
   double aP0, sU, sP, kf, aWorE;
   double ccValue = aCcValue[0];

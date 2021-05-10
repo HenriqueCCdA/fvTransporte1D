@@ -63,7 +63,10 @@ class CellHeatLoop: public CellLoop{
                         double const dx, double const dFace,
                         double const dir);
 
-
+    void boundaryCell(double &aL, double &aD, double &aU, double &b
+                    , double rho, double cp, double kP, double kV
+                    , double dx, double dt, double u
+                    , short ccType, double *aCcValue, short c);
   public:
 
     /***************************************************************************

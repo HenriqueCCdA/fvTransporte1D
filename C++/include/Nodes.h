@@ -2,7 +2,8 @@
 #define NODE_H
 
 #include"GerenciadoDeMemoria.h"
-#include"Fields.h"
+#include"FieldDif.h"
+#include"FieldTransp.h"
 
 #include<iostream>
 

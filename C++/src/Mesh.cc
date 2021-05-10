@@ -91,8 +91,7 @@ template <class TField> void Mesh<TField>::grid(void) {
  *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ******************************************************************************/
-template <class TField>
-void Mesh<TField>::nodalInterpol(void) {
+void Mesh<FieldDif>::nodalInterpol(void) {
   int const nCells = this->get_nCells();
   int const nNodes = this->get_nNodes();
   const int* const cells = this->get_cells().get_nodes();  
@@ -125,6 +124,18 @@ void Mesh<TField>::nodalInterpol(void) {
 }
 /*****************************************************************************/
 
+/******************************************************************************
+ *@details Interpola valores das céluas para o nós.
+ ******************************************************************************
+ *@date      2021 - 2021
+ *@author    Henrique C. C. de Andrade
+ ******************************************************************************/
+void Mesh<FieldTransp>::nodalInterpol(void) {
+ 
+}
+/*****************************************************************************/
+
 // ...
 template class Mesh<FieldDif>;
+template class Mesh<FieldTransp>;
 // ............................................................................

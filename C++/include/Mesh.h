@@ -7,6 +7,8 @@
 #include<algorithm>
 #include<iomanip>
 
+#include"FieldDif.h"
+#include"FieldTransp.h"
 #include"Nodes.h"
 #include"Cells.h"
 #include"CcCi.h"

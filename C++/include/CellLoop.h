@@ -4,6 +4,7 @@
 #include"Mesh.h"
 #include"Solver.h"
 #include"IntTemp.h"
+#include"FieldDif.h"
 
 
 enum cc { cce = 1, ccd = 2 };

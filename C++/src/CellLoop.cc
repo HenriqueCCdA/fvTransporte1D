@@ -260,7 +260,7 @@ double CellHeatLoop::boundaryGrad(short const ccType  , const double* const aCcV
     double tA = aCcValue[0];
     double tS;
    
-    tS = uP;
+    tS = uP - gradU0*dFace;
     qn = -h * (tA - tS);
     q = qn * dir;
     gradU = -q / coefDif;

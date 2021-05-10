@@ -51,15 +51,15 @@ template <class TField> void EpdSolver<TField>::solver(void){
     times.init_timer();
     uCell = this->solverEq->solver(uCell);
     times.updateSolverTimer();
-    //...........................................................................
-
-    // ... 
-    this->mesh->nodalInterpol();
-    //...........................................................................
+    //...........................................................................  
 
     // ... calculo do gradiente
     this->cellLoop->gradients();
     // ..........................................................................
+    
+    // ... 
+    this->mesh->nodalInterpol();
+    //...........................................................................
 
     // ...
     times.init_timer();
@@ -92,9 +92,11 @@ template <class TField> void EpdSolver<TField>::init(void) {
 
   // ... iniciando as celulas
   this->mesh->get_cells().get_fields().set_u(u0);
+  this->mesh->get_cells().get_fields().set_gradU(0.e0);
 
   // ... iniciando os nodes
   this->mesh->get_nodes().get_fields().set_u(u0);
+  this->mesh->get_nodes().get_fields().set_gradU(0.e0);
 
   //
   this->intTemp->set_iStep(0);

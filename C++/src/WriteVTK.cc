@@ -80,6 +80,13 @@ void WriterVTK<TField>::write(void) {
                       1,
                       fieldVTK::scalarsVTK);
 
+  this->propVtk<double>(file,
+                        this->mesh->get_nodes().get_fields().get_gradU(),
+                        "nodeGradU",
+                         nNodes,
+                         1,
+                         fieldVTK::scalarsVTK);
+
   // ... fechando o arquivo
   this->closeOutputFile();
 }

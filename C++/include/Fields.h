@@ -33,7 +33,7 @@ class Field {
 
     virtual ~Field(){
       #ifdef DEBUG
-      std::cout << "Destrutor: " << typeid(this).name() << endl;
+      std::cout << "Destrutor: " << typeid(this).name() << std::endl;
       #endif // DEBUG  
     }
 
@@ -67,15 +67,21 @@ class FieldDif : public Field {
       }
     }
 
+    void set_gradU(double const value) {
+      for (int i = 0; i < this->get_n(); i++) {
+        this->gradU[i] = value;
+      }
+    }
+
     void alloc(void) override{
       int n = this->get_n();
       this->u = mem.alloc<double>(n);
-      this->gradU = mem.alloc<double>(n);
+      this->gradU = mem.alloc<double>(n);      
     };
 
     ~FieldDif() {
       #ifdef DEBUG
-      std::cout << "Destrutor: " << typeid(this).name() << endl;
+      std::cout << "Destrutor: " << typeid(this).name() << std::endl;
       #endif // DEBUG  
       mem.dealloc<double>(&this->u);
       mem.dealloc<double>(&this->gradU);
@@ -111,7 +117,7 @@ class FieldTransp : public FieldDif {
 
     ~FieldTransp() {
       #ifdef DEBUG
-      std::cout << "Destrutor: " << typeid(this).name() << endl;
+      std::cout << "Destrutor: " << typeid(this).name() << std::endl;
       #endif // DEBUG  
       mem.dealloc<double>(&velocity);
       this->FieldDif::~FieldDif();

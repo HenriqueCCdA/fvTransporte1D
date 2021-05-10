@@ -93,38 +93,29 @@ template <class TField> void Mesh<TField>::grid(void) {
  ******************************************************************************/
 template <class TField>
 void Mesh<TField>::nodalInterpol(void) {
-  int nCells = this->get_nCells();
-  int nNodes = this->get_nNodes();
-  int *cells = this->get_cells().get_nodes();
-  double *nodeU = this->get_nodes().get_fields().get_u();
-  double *cellU = this->get_cells().get_fields().get_u();
+  int const nCells = this->get_nCells();
+  int const nNodes = this->get_nNodes();
+  const int* const cells = this->get_cells().get_nodes();  
 
-  // ...
-  for (int i = 0; i < nNodes; i++)
-    nodeU[i] = 0.e0;
-  // ......................................................................
-
-  // ...
-  int no1, no2;
-  for (int i = 0; i < nCells; i++) {
-    no1 = cells[2 * i];
-    no2 = cells[2 * i + 1];
-    nodeU[no1] += cellU[i];
-    nodeU[no2] += cellU[i];
-  }
-  // ......................................................................
-
-  // ...
-  for (int i = 1; i < nNodes - 1; i++)
-    nodeU[i] *= 0.5e0;
-  // ......................................................................
-
+  // ... interpolacao de U
+  double* const nodeU = this->get_nodes().get_fields().get_u();
+  const double* const cellU = this->get_cells().get_fields().get_u();
+  this->nodes.interpol(nodeU, cellU, cells, nNodes, nCells);
   // ...
   if (this->ccci.get_cceType() == typeCc::temp)
     nodeU[0] = this->ccci.get_cceValue(0);
   if (this->ccci.get_ccdType() == typeCc::temp)
     nodeU[nNodes - 1] = this->ccci.get_ccdValue(0);
   // ......................................................................
+
+  // ... interpolacao de gradU
+  double* const nGradU = this->get_nodes().get_fields().get_gradU();
+  const double* const cGradU = this->get_cells().get_fields().get_gradU();
+
+  this->nodes.interpol(nGradU, cGradU, cells, nNodes, nCells);
+  // ...
+  // ......................................................................
+
 }
 /*****************************************************************************/
 

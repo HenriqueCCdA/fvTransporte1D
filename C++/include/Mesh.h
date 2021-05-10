@@ -31,8 +31,9 @@ template <class TField> class Mesh{
     Cells<TField> cells; /**< Céluas  da malha*/
     CcCi  ccci;  /**< Condicoes de contorno*/
     IntTemp *intTemp;
-    PropRef propRef;  
+    PropRef propRef; 
 
+    
   public:
 
     Mesh(IntTemp *intTemp){

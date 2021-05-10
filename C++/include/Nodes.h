@@ -2,6 +2,7 @@
 #define NODE_H
 
 #include"GerenciadoDeMemoria.h"
+#include"Fields.h"
 
 #include<iostream>
 
@@ -39,6 +40,13 @@ template <class TField>class Nodes{
     // ..........................................................................
     
     // ... metodos
+    /***************************************************************************
+     * @brief Faz a interpolação nodal         
+     **************************************************************************/
+    void interpol(double* const nValue, const double* const cValue,
+                  const int* const cells,
+                  int const nNodes, int const nCells);
+
 
     /***************************************************************************
      * @brief Aloca memória para os arranjos x     

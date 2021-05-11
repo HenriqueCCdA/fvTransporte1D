@@ -1,7 +1,7 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include"GerenciadoDeMemoria.h"
+#include"GMemoria.h"
 #include"FieldDif.h"
 #include"FieldTransp.h"
 

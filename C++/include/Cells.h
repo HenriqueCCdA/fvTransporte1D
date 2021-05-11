@@ -2,7 +2,7 @@
 
 #include"Fields.h"
 #include"Prop.h"
-#include"GerenciadoDeMemoria.h"
+#include"GMemoria.h"
 
 
 enum typeCell{

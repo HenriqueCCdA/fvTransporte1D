@@ -1,7 +1,7 @@
 #ifndef PROP_H
 #define  PROP_H
 
-#include"../include/GerenciadoDeMemoria.h"
+#include"../include/GMemoria.h"
 
 /*******************************************************************************
  *@class PropRef

@@ -2,10 +2,9 @@
 #define  GLOBALVAR_H
 
 #include"RunTimes.h"
-#include"GerenciadoDeMemoria.h"
+#include"GMemoria.h"
 
 RunTimes times; /**< Objeto global com estrutura de tempos de cada função */
 Memoria mem;    /**< Objetoe global com estrutura de alocação de memória */
-
 int Memoria::countArrays = 0;
 #endif

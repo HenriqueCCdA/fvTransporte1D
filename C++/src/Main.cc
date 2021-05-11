@@ -5,7 +5,7 @@
 #include"../include/Files.h"
 #include"../include/CellLoop.h"
 #include"../include/RunTimes.h"
-#include"../include/GerenciadoDeMemoria.h"
+#include"../include/GMemoria.h"
 #include"../include/GlobalVar.h"
 #include"../include/Writer.h"
 #include"../include/Reader.h"

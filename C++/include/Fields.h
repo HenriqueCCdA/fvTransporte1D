@@ -1,7 +1,7 @@
 #ifndef FIELDS_H
 #define FIELDS_H
 
-#include"GerenciadoDeMemoria.h"
+#include"GMemoria.h"
 
 /*******************************************************************************
  *@class Field   

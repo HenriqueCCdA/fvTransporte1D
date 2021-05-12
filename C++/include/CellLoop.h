@@ -5,6 +5,7 @@
 #include"Solver.h"
 #include"IntTemp.h"
 #include"FieldDif.h"
+#include"Medias.h"
 
 
 enum cc { cce = 1, ccd = 2 };

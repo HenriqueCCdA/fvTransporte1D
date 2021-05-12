@@ -28,7 +28,7 @@ CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTem
   // ......................................................................
 
 }
-
+/********************************************************************************/
 
 
 /********************************************************************************
@@ -37,7 +37,7 @@ CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTem
  *-->        A estrutura de dados do sistema de equações é atualizado <!--
  *-->        no final do método.
  ********************************************************************************
- *@date      19/04/2021 - 24/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ********************************************************************************/
 void CellHeatLoop::montaSistema(void){
@@ -62,13 +62,17 @@ void CellHeatLoop::montaSistema(void){
          *aD = triaDiagonal->get_d(),
          *aL = triaDiagonal->get_l(),
           *b = triaDiagonal->get_b();
+  //
+  Medias md(medias::mediaHarmonica);
+
   // ...
   int nCells = this->mesh->get_nCells(), n;
   // ..........................................................................
 
   // ... Lado esquerdo
+  kf = md.medias(k[0], k[1]);
   this->boundaryCell(aL[0]  , aD[0], aU[0], b[0],
-                     rho[0] , cp[0], k[0] , k[1],
+                     rho[0] , cp[0], k[0] , kf,
                      dx     , dt   , u[0],  
                      cceType, cceValue, cce);
   // ............................................................................
@@ -76,8 +80,9 @@ void CellHeatLoop::montaSistema(void){
 
   // ... Lado direito
   n = nCells - 1;
-  this->boundaryCell(aL[n] , aD[n]   , aU[n], b[n],
-                     rho[n] , cp[n]   ,  k[n], k[n-1],
+  kf = md.medias(k[n], k[n-1]);
+  this->boundaryCell(aL[n]  , aD[n]   , aU[n], b[n],
+                     rho[n] , cp[n]   , k[n] , kf,
                      dx     , dt      , u[n],
                      ccdType, ccdValue, ccd);
   // ............................................................................
@@ -86,10 +91,10 @@ void CellHeatLoop::montaSistema(void){
   for (int i = 1; i < nCells - 1; i++) {
     aP0 = rho[i] * cp[i] * dx / dt;
     // ... w
-    kf = (k[i - 1] + k[i])*0.5e0;
+    kf = md.medias(k[i - 1], k[i]);
     aW = kf / dx;
     // ...
-    kf = (k[i] + k[i + 1])*0.5e0;
+    kf = md.medias(k[i], k[i + 1]);
     aE = kf / dx;
     // ...
     aL[i] = -aW;
@@ -186,7 +191,7 @@ void CellHeatLoop::flux(void) {
  *@param   rho     - massa especifica
  *@param   cp      - calor especifico
  *@param   kP      - coeficiente de difusao da celula central
- *@param   kV      - coeficiente de difusao da celula vizina
+ *@param   kF      - coeficiente de difusao na face celula
  *@param   h       - coeficiente de calor convectivo
  *@param   dx      - tamanho da celula
  *@param   dt      - passo de tempo
@@ -194,19 +199,18 @@ void CellHeatLoop::flux(void) {
  *@param   ccType  - tipo da condicao de contorno
  *@param   ccValue - parametros da condicao de contorno      
  ********************************************************************************
- *@date      19/04/2021 - 24/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
 void CellHeatLoop::boundaryCell(double &aL, double &aD, double &aU, double &b
-                              , double rho, double cp, double kP, double kV
+                              , double rho, double cp, double kP, double kf
                               , double dx, double dt, double u
                               , short ccType, double *aCcValue, short c) {
 
-  double aP0, sU, sP, kf, aWorE;
+  double aP0, sU, sP, aWorE;
   double ccValue = aCcValue[0];
 
   aP0 = rho * cp * dx / dt;
-  kf = (kP + kV)*0.5e0;
   aWorE = kf / dx;
   // ... temperatura prescrita
   if (ccType == typeCc::temp) {

@@ -22,10 +22,10 @@ public:
 
   double* get_velocity(void) { return this->velocity; };
 
-  void alloc(void) override {
+  void alloc(short type) override {
     int n = this->get_n();
     this->velocity = mem.alloc<double>(n);
-    this->FieldDif::alloc();
+    this->FieldDif::alloc(type);
   };
 
   ~FieldTransp() {

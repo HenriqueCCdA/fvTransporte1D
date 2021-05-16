@@ -1,4 +1,4 @@
-#include"../include/GerenciadoDeMemoria.h"
+#include"../include/GMemoria.h"
 
 /**************************************************************************
  *@details Aloca um arranjo de tamanho n. Este metodo utiliza new para      <--

@@ -34,7 +34,6 @@ template <class TField> class Mesh{
     CcCi  ccci;  /**< Condicoes de contorno*/
     IntTemp *intTemp;
     PropRef propRef; 
-
     
   public:
 

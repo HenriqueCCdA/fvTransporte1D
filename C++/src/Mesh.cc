@@ -22,7 +22,7 @@ template <class TField> void Mesh<TField>::display(void) {
   cout << "initialt " << this->ccci.get_cciValue() << endl;
   cout << "prop     " << this->propRef.get_rho() << " "
     << this->propRef.get_cp() << " "
-    << this->propRef.get_k() << endl;
+    << this->propRef.get_ceofDif() << endl;
   cout << "**********************************************" << endl;
 }
 /**********************************************************************/
@@ -98,7 +98,8 @@ void Mesh<FieldDif>::nodalInterpol(void) {
 
   // ... interpolacao de U
   double* const nodeU = this->get_nodes().get_fields().get_u();
-  const double* const cellU = this->get_cells().get_fields().get_u();
+  const double* const cellU = this->get_cells()
+                     .get_fields().get_u(timeLevel::nPlusOne);
   this->nodes.interpol(nodeU, cellU, cells, nNodes, nCells);
   // ...
   if (this->ccci.get_cceType() == typeCc::temp)

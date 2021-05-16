@@ -26,7 +26,7 @@ static double polinomio(const double* const a, double const u,
 void Prop::updateCoefDif(const double* const u, unsigned int const n) {
 
   double* const coefDif = this->ceofDif;
-  double const a[] = {1.0, 0.0001, 0.0001};
+  double const a[] = {1.0, 0.0000, 0.0000};
 
   for (int i = 0; i < n; i++) {
     coefDif[i] = polinomio(a, u[i], 2);
@@ -46,7 +46,7 @@ void Prop::updateCoefDif(const double* const u, unsigned int const n) {
 void Prop::updateRho(const double* const u, unsigned int const n) {
 
   double* const rho = this->rho;
-  double const a[] = { 2.0, 0.0001, -0.0001 };
+  double const a[] = { 2.0, 0.0000, -0.0000 };
 
   for (int i = 0; i < n; i++) {
     rho[i] = polinomio(a, u[i], 2);

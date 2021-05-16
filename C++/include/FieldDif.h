@@ -23,14 +23,20 @@ private:
 public:
 
   double* get_u(void) { return this->u; };
+  
+  double* get_u(short const level) {
+    int desloc = this->get_n()* level;
+    return &this->u[desloc];
+  };
+
   double* get_gradU(void) { return this->gradU; };
   double* get_flux(void) { return this->flux; };
 
   void set_u(double const value);
-
+  void set_u(double const value, short const level);
   void set_gradU(double const value);
 
-  void alloc(void) override;
+  void alloc(short type) override;
 
   ~FieldDif();
 

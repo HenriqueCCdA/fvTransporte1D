@@ -16,7 +16,7 @@ enum typeCell{
  *@brief     A Classe com as informações as células.
  *@details   Classe com as informações das células.             
  *******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
 template <class TField> class Cells {
@@ -25,6 +25,7 @@ template <class TField> class Cells {
     int nCells; /**< Número de células*/
     int *nodes; /**< Conectividades nodais das células Nodes[nCel,0] = no1 e Nodes[nCel,1] = no2*/
     double *xc; /**< Valores dos centroides*/
+    double *residuo; /**< Resido na celula*/
     short *nNodesByCell; /**< Numeros de nos por celula*/
     short *type; /**< Tipo da celula*/
     double dx;  /**< Comprimento das celulas*/
@@ -131,6 +132,17 @@ template <class TField> class Cells {
     short* get_type() { return this->type; }
     // ..........................................................................
     
+    /***************************************************************************
+    * @brief Retorna o ponteiro para o arranjo de residuo por celula
+    ***************************************************************************
+    * @return - valor do comprimento das células
+    ***************************************************************************
+    * @date      2021 - 2021
+    * @author    Henrique C. C. de Andrade
+    ***************************************************************************/
+    double* get_residuo(void) { return this->residuo; }
+    // ..........................................................................
+
     // ... metodos
 
     /***************************************************************************
@@ -147,10 +159,25 @@ template <class TField> class Cells {
       this->type         = mem.alloc<short>(n);
       this->nNodesByCell = mem.alloc<short>(n);
       this->xc = mem.alloc<double>(n);
+      this->residuo = mem.alloc<double>(n);
       this->nodes = mem.alloc<int>(2*n);
 
       this->prop.alloc(n);
 
+    }
+
+    /***************************************************************************
+    * @brief Atualizao as propriedades                                     
+    ***************************************************************************
+    * @date      2021 - 2021
+    * @author    Henrique C. C. de Andrade
+    ***************************************************************************/
+    void updateProp(void) {
+      const double* const u = this->fields.get_u();
+      unsigned int const n = this->get_nCells();
+
+      this->prop.updateCoefDif(u, n);
+      this->prop.updateRho(u, n);
     }
     // ..........................................................................
 
@@ -160,7 +187,7 @@ template <class TField> class Cells {
      * @details Este destrutor libera a memória utilizada nos arranjos xc  <!--
      * -->    , u, nodes, nNodesByCell, type e prop.
      **************************************************************************
-     * @date      19/04/2021 - 30/04/2021
+     * @date      2021 - 2021
      * @author    Henrique C. C. de Andrade
      ***************************************************************************/
     ~Cells() {
@@ -172,6 +199,7 @@ template <class TField> class Cells {
       mem.dealloc<short>(&this->type);
       mem.dealloc<short>(&this->nNodesByCell);
       mem.dealloc<double>(&this->xc);
+      mem.dealloc<double>(&this->residuo);
       mem.dealloc<int>(&this->nodes);
 //    this->prop.~Prop();
     }

@@ -3,6 +3,19 @@
 
 #include"GMemoria.h"
 
+enum timeLevel {
+  nPlusOne = 0,
+  nZero    = 1,
+  nMinusOne= 2
+};
+
+enum typeField {
+  cell = 0,
+  node = 1
+};
+
+
+
 /*******************************************************************************
  *@class Field   
  *******************************************************************************
@@ -29,7 +42,7 @@ class Field {
     int get_ndf(void) { return  this->ndf;};
     int get_ndm(void) { return this->ndm;};
 
-    virtual void alloc(void) = 0;
+    virtual void alloc(short type) = 0;
 
     virtual ~Field(){
       #ifdef DEBUG

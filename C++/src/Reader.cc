@@ -101,7 +101,7 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
       mesh.get_propRef().set_cp(dValue);
 
       file >> dValue;
-      mesh.get_propRef().set_k(dValue);
+      mesh.get_propRef().set_ceofDif(dValue);
     }
 
     else if (word == "end") {

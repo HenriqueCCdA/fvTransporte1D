@@ -57,7 +57,7 @@ void WriterVTK<TField>::write(void) {
   this->cellData(file, nCells);
 
   this->propVtk<double>(file,
-                this->mesh->get_cells().get_fields().get_u(),
+                this->mesh->get_cells().get_fields().get_u(timeLevel::nPlusOne),
                 "cU",
                 nCells,
                 1,
@@ -73,6 +73,20 @@ void WriterVTK<TField>::write(void) {
   this->propVtk<double>(file,
                         this->mesh->get_cells().get_fields().get_flux(),
                         "cFlux",
+                        nCells,
+                        1,
+                        fieldVTK::scalarsVTK);
+
+  this->propVtk<double>(file,
+                        this->mesh->get_cells().get_prop().get_ceofDif(),
+                        "ceofDiff",
+                         nCells,
+                         1,
+                         fieldVTK::scalarsVTK);
+
+  this->propVtk<double>(file,
+                        this->mesh->get_cells().get_prop().get_rho(),
+                        "rho",
                         nCells,
                         1,
                         fieldVTK::scalarsVTK);

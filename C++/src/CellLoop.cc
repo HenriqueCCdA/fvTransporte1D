@@ -16,7 +16,7 @@ CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTem
   this->mesh->get_cells().get_fields().set_n(n);
   this->mesh->get_cells().get_fields().set_ndf(1);
   this->mesh->get_cells().get_fields().set_ndm(1);
-  this->mesh->get_cells().get_fields().alloc();
+  this->mesh->get_cells().get_fields().alloc(typeField::cell);
   // ......................................................................
 
   // ... campo de variaveis por no
@@ -24,7 +24,7 @@ CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTem
   this->mesh->get_nodes().get_fields().set_n(n);
   this->mesh->get_nodes().get_fields().set_ndf(1);
   this->mesh->get_nodes().get_fields().set_ndm(1);
-  this->mesh->get_nodes().get_fields().alloc();
+  this->mesh->get_nodes().get_fields().alloc(typeField::node);
   // ......................................................................
 
 }
@@ -46,7 +46,7 @@ void CellHeatLoop::montaSistema(void){
   // ..
   double *rho = this->mesh->get_cells().get_prop().get_rho();
   double *cp = this->mesh->get_cells().get_prop().get_cp();
-  double *k = this->mesh->get_cells().get_prop().get_k();
+  double *ceofDif = this->mesh->get_cells().get_prop().get_ceofDif();
   // ...
   double dt = this->intTemp->get_dt();
   double dx = this->mesh->get_cells().get_dx();
@@ -55,7 +55,9 @@ void CellHeatLoop::montaSistema(void){
       ccdType = this->mesh->get_ccci().get_ccdType();
   double *cceValue = this->mesh->get_ccci().get_cceValue(),
          *ccdValue = this->mesh->get_ccci().get_ccdValue();
-  double *u = this->mesh->get_cells().get_fields().get_u();
+  double *u0 = this->mesh->get_cells().get_fields().get_u(timeLevel::nZero);
+  double *u  = this->mesh->get_cells().get_fields().get_u(timeLevel::nPlusOne);
+  double *resCell = this->mesh->get_cells().get_residuo();
   // ... sistema de equacoes
   TriaDiagonal *triaDiagonal = (TriaDiagonal*) this->solver->get_dataStruct();
   double *aU = triaDiagonal->get_u(),
@@ -70,40 +72,46 @@ void CellHeatLoop::montaSistema(void){
   // ..........................................................................
 
   // ... Lado esquerdo
-  kf = md.medias(k[0], k[1]);
+  kf = md.medias(ceofDif[0], ceofDif[1]);
   this->boundaryCell(aL[0]  , aD[0], aU[0], b[0],
-                     rho[0] , cp[0], k[0] , kf,
-                     dx     , dt   , u[0],  
+                     rho[0] , cp[0], ceofDif[0] , kf,
+                     dx     , dt   , u0[0],  
                      cceType, cceValue, cce);
+  // ... residuo
+  resCell[0] = b[0] - (aD[0] * u[0] + aU[0] * u[1]);
   // ............................................................................
 
 
   // ... Lado direito
   n = nCells - 1;
-  kf = md.medias(k[n], k[n-1]);
+  kf = md.medias(ceofDif[n], ceofDif[n-1]);
   this->boundaryCell(aL[n]  , aD[n]   , aU[n], b[n],
-                     rho[n] , cp[n]   , k[n] , kf,
-                     dx     , dt      , u[n],
+                     rho[n] , cp[n]   , ceofDif[n] , kf,
+                     dx     , dt      , u0[n],
                      ccdType, ccdValue, ccd);
+  resCell[n] = b[n] - (aL[n] * u[n-1] + aD[n] * u[n] );
   // ............................................................................
  
   // ... loop nas celulas do interios
   for (int i = 1; i < nCells - 1; i++) {
     aP0 = rho[i] * cp[i] * dx / dt;
     // ... w
-    kf = md.medias(k[i - 1], k[i]);
+    kf = md.medias(ceofDif[i - 1], ceofDif[i]);
     aW = kf / dx;
     // ...
-    kf = md.medias(k[i], k[i + 1]);
+    kf = md.medias(ceofDif[i], ceofDif[i + 1]);
     aE = kf / dx;
     // ...
     aL[i] = -aW;
     aD[i] = aP0 + aW + aE;
     aU[i] = -aE;
     // ...
-    b[i] = aP0 * u[i];
+    b[i] = aP0 * u0[i];    
+    // ... residuo
+    resCell[i] = b[i] - (aL[i]*u[i-1] + aD[i]*u[i] + aU[i] * u[i + 1]);
   }
   // ..........................................................................
+
 }
 //*****************************************************************************
 
@@ -117,7 +125,7 @@ void CellHeatLoop::montaSistema(void){
 void CellHeatLoop::gradients(void) {
   
   // ...
-  const double* const coefDif = this->mesh->get_cells().get_prop().get_k();
+  const double* const coefDif = this->mesh->get_cells().get_prop().get_ceofDif();
   // ...
   double const dx = this->mesh->get_cells().get_dx();
   // ...
@@ -125,7 +133,8 @@ void CellHeatLoop::gradients(void) {
     ccdType = this->mesh->get_ccci().get_ccdType();
   const double* const cceValue = this->mesh->get_ccci().get_cceValue(),
                       *ccdValue = this->mesh->get_ccci().get_ccdValue();
-  const double* const u = this->mesh->get_cells().get_fields().get_u();
+  const double* const u = this->mesh->get_cells()
+                         .get_fields().get_u(timeLevel::nPlusOne);
   double* const gradU = this->mesh->get_cells().get_fields().get_gradU();
   // ...
   int nCells = this->mesh->get_nCells();
@@ -163,8 +172,9 @@ void CellHeatLoop::gradients(void) {
 void CellHeatLoop::flux(void) {
 
   // ...
-  const double* const coefDif = this->mesh->get_cells().get_prop().get_k();
-  const double* const u = this->mesh->get_cells().get_fields().get_u();
+  const double* const coefDif = this->mesh->get_cells().get_prop().get_ceofDif();
+  const double* const u = this->mesh->get_cells()
+                               .get_fields().get_u(timeLevel::nPlusOne);
   const double* const gradU = this->mesh->get_cells().get_fields().get_gradU();
   double* const flux = this->mesh->get_cells().get_fields().get_flux();
   // ...
@@ -238,7 +248,7 @@ void CellHeatLoop::boundaryCell(double &aL, double &aD, double &aU, double &b
   aD = aP0 + aWorE - sP;
   // ... E
   aU = -((c == ccd) ? -0.0 : aWorE);
-  // c ...
+  // ...
   b = sU + aP0 * u;
   // ............................................................................
 }

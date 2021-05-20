@@ -23,36 +23,48 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
   double dValue;
   int iValue;
 
+  // ... loop de leitura
   while (file >> word) {
 
     transform(word.begin(), word.end(), word.begin(), ::tolower);
 
+    // ... nome do arquivo de saida
     if (word == "output") {
       file >> word;
       files.set_prefixNameOut(word);
     }
+    // ........................................................................
 
+    // ... comprimento do dominio
     else if (word == "length") {
       file >> dValue;
       mesh.set_l(dValue);
     }
+    // ........................................................................
 
+    // ... numero de celulas
     else if (word == "ndiv") {
       file >> iValue;
       mesh.get_cells().set_nCells(iValue);
       mesh.get_nodes().set_nNodes(iValue + 1);
     }
+    // ........................................................................
 
+    // ... intervalo de tempo
     else if (word == "dt") {
       file >> dValue;
       intTemp.set_dt(dValue);
     }
+    // ........................................................................
 
+    // ... numero passos de tempo
     else if (word == "nstep") {
       file >> iValue;
       intTemp.set_nStep(iValue);
     }
+    // ........................................................................
 
+    // ... condicoes de contorno esquerdo
     else if (word == "cce") {
       int n = 0;
       double vValue[2];
@@ -69,7 +81,9 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
       }
       mesh.get_ccci().set_cceValue(vValue, n);
     }
+    // ........................................................................
 
+    // ... condicoes de contorno direito
     else if (word == "ccd") {
       int n = 0;
       double vValue[2];
@@ -87,21 +101,56 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
       }
       mesh.get_ccci().set_ccdValue(vValue, n);
     }
+    // ........................................................................
 
-    else if (word == "initialt") {
+    // ... condicao de contorno inicial
+    else if (word == "initialu") {
       file >> dValue;
       mesh.get_ccci().set_cciValue(dValue);
     }
 
-    else if (word == "prop") {
-      file >> dValue;
-      mesh.get_propRef().set_rho(dValue);
+    // ... leitura das propriedades
+    else if (word == "rho" || word == "diffusion") {
+      string type;
 
-      file >> dValue;
-      mesh.get_propRef().set_cp(dValue);
+      cout << word << endl;
 
-      file >> dValue;
-      mesh.get_propRef().set_ceofDif(dValue);
+      file >> type;
+
+      PropPhisicy *prop;
+      if (word == "rho")
+        prop = mesh.get_cells().get_prop().get_rho();
+      else if(word == "diffusion")
+        prop = mesh.get_cells().get_prop().get_coefDif();     
+
+      // ... variaveis constantes
+      if (type == "cte") {
+        double vValue;
+        file >> vValue;
+        prop->set_type(typePropVar::cte);
+        prop->set_valueCte(vValue);
+      }
+
+      // ... variacao por um polinomio
+      else if (type == "pol") {
+        double a[nTermMax];
+        int iValue;
+        file >> iValue;
+      
+        if (iValue > nTermMax) {
+          cout << "Erro no numero de termos do poliniomo !!" << endl;
+          exit(error::nTermsPol);
+        }
+
+        for (int i = 0; i < iValue; i++) {
+          file >> a[i];
+        }
+
+        prop->set_type(typePropVar::varU);
+        prop->get_pol()->set_a(a, iValue);
+      }
+      // ........................................................................
+      
     }
 
     else if (word == "end") {
@@ -109,11 +158,13 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
     }
 
   }
+  // ........................................................................
 
   file.close();
 
+  // ... alocando memoria
   mesh.alloc();
-
+  // ........................................................................
 }
 /******************************************************************************/
 

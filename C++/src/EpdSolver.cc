@@ -106,7 +106,7 @@ template <class TField> void EpdSolver<TField>::init(void) {
   PropRef propRef = this->mesh->get_propRef();
 
   // ... iniciando as propriedades
-  this->mesh->get_cells().get_prop().init_prop(propRef, nCells);
+  this->mesh->get_cells().get_prop().init_prop(u0, nCells);
 
   // ... iniciando as celulas
   this->mesh->get_cells().get_fields().set_u(u0, timeLevel::nZero);

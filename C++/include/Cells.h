@@ -23,11 +23,11 @@ template <class TField> class Cells {
 
   private:
     int nCells; /**< Número de células*/
-    int *nodes; /**< Conectividades nodais das células Nodes[nCel,0] = no1 e Nodes[nCel,1] = no2*/
-    double *xc; /**< Valores dos centroides*/
-    double *residuo; /**< Resido na celula*/
-    short *nNodesByCell; /**< Numeros de nos por celula*/
-    short *type; /**< Tipo da celula*/
+    int *nodes = nullptr; /**< Conectividades nodais das células Nodes[nCel,0] = no1 e Nodes[nCel,1] = no2*/
+    double *xc = nullptr; /**< Valores dos centroides*/
+    double *residuo = nullptr; /**< Resido na celula*/
+    short *nNodesByCell = nullptr; /**< Numeros de nos por celula*/
+    short *type = nullptr; /**< Tipo da celula*/
     double dx;  /**< Comprimento das celulas*/
     Prop prop;  /**< Propriedades fisicas por células*/      
     TField fields; /**< Campo das variaveis*/ 

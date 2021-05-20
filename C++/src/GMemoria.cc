@@ -45,11 +45,13 @@ template<typename T> T* Memoria::alloc(size_t n, std::string name) {
 ***************************************************************************
 * @param x - Endereção do ponteiro alocado
 ***************************************************************************
-* @date      19/04/2021 - 25/04/2021
+* @date      2021 - 2021
 * @author    Henrique C. C. de Andrade
 ***************************************************************************/
 template<typename T>  void Memoria::dealloc(T **x) {
+
   delete[] * x;
+
   *x = nullptr;
 
   //... 
@@ -60,8 +62,9 @@ template<typename T>  void Memoria::dealloc(T **x) {
   this->type[nn] = "";
   this->pos[nn] = 0;
   // ....................................................................... 
-
-  Memoria::countArrays--;
+  
+  if(Memoria::countArrays > 0)
+    Memoria::countArrays--;
 }
 /**************************************************************************/
 

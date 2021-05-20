@@ -6,7 +6,8 @@
 *@date      2021 - 2021
 *@author    Henrique C. C. de Andrade
 ***************************************************************************/
-CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh, IntTemp *intTemp) {
+CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh,
+                           IntTemp *intTemp) {
   this->solver = solver;
   this->mesh = mesh;
   this->intTemp = intTemp;
@@ -44,9 +45,9 @@ void CellHeatLoop::montaSistema(void){
   // ...
   double aP0, kf, aE, aW;
   // ..
-  double *rho = this->mesh->get_cells().get_prop().get_rho();
+  double *rho = this->mesh->get_cells().get_prop().get_rho()->get_value();
   double *cp = this->mesh->get_cells().get_prop().get_cp();
-  double *ceofDif = this->mesh->get_cells().get_prop().get_ceofDif();
+  double *ceofDif = this->mesh->get_cells().get_prop().get_coefDif()->get_value();
   // ...
   double dt = this->intTemp->get_dt();
   double dx = this->mesh->get_cells().get_dx();
@@ -125,7 +126,8 @@ void CellHeatLoop::montaSistema(void){
 void CellHeatLoop::gradients(void) {
   
   // ...
-  const double* const coefDif = this->mesh->get_cells().get_prop().get_ceofDif();
+  const double* const coefDif = this->mesh->get_cells().get_prop()
+                               .get_coefDif()->get_value();
   // ...
   double const dx = this->mesh->get_cells().get_dx();
   // ...
@@ -172,7 +174,8 @@ void CellHeatLoop::gradients(void) {
 void CellHeatLoop::flux(void) {
 
   // ...
-  const double* const coefDif = this->mesh->get_cells().get_prop().get_ceofDif();
+  const double* const coefDif = this->mesh->get_cells()
+                         .get_prop().get_coefDif()->get_value();
   const double* const u = this->mesh->get_cells()
                                .get_fields().get_u(timeLevel::nPlusOne);
   const double* const gradU = this->mesh->get_cells().get_fields().get_gradU();

@@ -2,7 +2,93 @@
 #define  PROP_H
 
 #include<cmath>
+
 #include"GMemoria.h"
+#include"Polinomio.h"
+
+enum typePropVar{
+  cte  = 1, /**< Valor constante*/
+  varU = 2  /**< Variacao com U */
+};
+
+/*******************************************************************************
+ *@class PropPhisicy
+ *******************************************************************************
+ *@brief     Classe com que definine uma proriedade fisicas.
+ *******************************************************************************
+ *@date      2021 - 2021
+ *@author    Henrique C. C. de Andrade
+ *******************************************************************************/
+class PropPhisicy {
+
+  private:
+    bool update;
+    int n;
+    short type;
+    double *value = nullptr;
+    double valueCte;
+    Polinomio pol;
+
+  public:
+
+    // ... setters
+    void set_n(int value) { this->n = value; }
+
+    void set_type(short type) { 
+      this->type = type;
+      if (this->type == typePropVar::cte)
+        this->update = false;
+      else
+        this->update = true;
+    }
+
+    // ... setters
+    void set_valueCte(double const value) { this->valueCte = value; }
+
+    void set_value(double const u) {
+      if(this->type == typePropVar::cte){
+        for (int i = 0; i < this->n; i++) {
+          this->value[i] = this->valueCte;
+        }
+      }
+      else if (this->type == typePropVar::varU) {
+        for (int i = 0; i < this->n; i++) {
+          this->value[i] = this->pol.polinomio(u);
+        }
+      }
+    }
+
+    // ... getters
+    double* get_value(void) { return this->value;}
+    Polinomio* get_pol(void) { return &this->pol;}
+
+    bool isToUpdate(void) { return this->update;}
+
+    void init(double const u, int const n) {
+      this->set_n(n);
+      this->alloc();
+      this->set_value(u);
+    }
+
+
+    void alloc(void) {
+      this->value = mem.alloc<double>(this->n);
+    }
+
+    void dealloc() {
+       if (this->type == typePropVar::varU)
+         mem.dealloc<double>(&value);
+    }
+
+    // ... Destrutor
+    ~PropPhisicy() {
+      #ifdef DEBUG
+        std::cout << "Destrutor: " << typeid(this).name() << std::endl;
+      #endif // DEBUG    
+    }
+    // ..........................................................................
+
+};
 
 
 /*******************************************************************************
@@ -52,9 +138,9 @@ class PropRef {
 class Prop {
 
 private:
-  double *rho; /**< Massa específica*/
-  double *cp;  /**< Calor específico*/
-  double *ceofDif;   /**< Coeficiente de difusão*/
+  double *cp = nullptr;        /**< Calor específico*/
+  PropPhisicy rho;     /**< Massa específica*/
+  PropPhisicy coefDif;  /**< Coeficiente de difusão*/
 
 public:
 
@@ -64,30 +150,31 @@ public:
   **************************************************************************
   * @return retorna o ponterio
   **************************************************************************
-  * @date      19/04/2021 - 25/04/2021
+  * @date      2021 - 2021
   * @author    Henrique C. C. de Andrade
   ***************************************************************************/
-  double* get_rho(void) { return this->rho; }
-  
- /**************************************************************************
-  * @brief Obtém o array da calor específico
-  **************************************************************************
-  * @return retorna o ponterio
-  **************************************************************************
-  * @date      19/04/2021 - 25/04/2021
-  * @author    Henrique C. C. de Andrade
-  ***************************************************************************/
-  double* get_cp(void) { return this->cp; }
-  
- /**************************************************************************
-  * @brief Obtém o array do coeficiente de difusao  
+  PropPhisicy* get_rho(void){ return &rho;};
+
+  /**************************************************************************
+  * @brief Obtém o array do coeficiente de difusao
   **************************************************************************
   * @return retorna o ponterio
   **************************************************************************
   * @date      2021 - 2021
   * @author    Henrique C. C. de Andrade
   ***************************************************************************/
-  double* get_ceofDif(void) { return this->ceofDif; }
+  PropPhisicy* get_coefDif(void) { return &coefDif; };
+
+ /**************************************************************************
+  * @brief Obtém o array da calor específico
+  **************************************************************************
+  * @return retorna o ponterio
+  **************************************************************************
+  * @date      2021 - 2021
+  * @author    Henrique C. C. de Andrade
+  ***************************************************************************/
+  double* get_cp(void) { return this->cp; }
+ 
   // ..........................................................................
 
 
@@ -98,30 +185,30 @@ public:
   **************************************************************************
   * @param n - tamanho o arranjo
   **************************************************************************
-  * @date      19/04/2021 - 25/04/2021
+  * @date      2021 - 2021
   * @author    Henrique C. C. de Andrade
   ***************************************************************************/
   void alloc(int n) {
-    this->rho = mem.alloc<double>(n);
     this->cp = mem.alloc<double>(n);
-    this->ceofDif = mem.alloc<double>(n);
   }
 
   /**************************************************************************
   * @brief Inicializa as propriedades fisicas
   **************************************************************************
-  * @param PropRef - propriedades de referencia
-  * @param n       - tamanho o arranjo
+  * @param u - valor u                     
+  * @param n - tamanho o arranjo
   **************************************************************************
-  * @date      19/04/2021 - 25/04/2021
+  * @date      2021 - 2021
   * @author    Henrique C. C. de Andrade
   ***************************************************************************/
-  void init_prop(PropRef &propRef, int n) {
+  void init_prop(double u0, int n) {
     for (int i = 0; i < n; i++){
-      this->rho[i] = propRef.get_rho();
-      this->cp[i]  = propRef.get_cp();
-      this->ceofDif[i]   = propRef.get_ceofDif();
+      this->cp[i]  = 1.0;
     }
+
+    this->rho.init(u0, n);
+    this->coefDif.init(u0, n);
+
   }
   // ..........................................................................
 
@@ -139,10 +226,13 @@ public:
     #ifdef DEBUG
       std::cout << "Destrutor: " << typeid(this).name() << std::endl;
     #endif // DEBUG    
-    mem.dealloc<double>(&this->rho);
     mem.dealloc<double>(&this->cp);
-    mem.dealloc<double>(&this->ceofDif);
+    this->coefDif.dealloc();
+    this->rho.dealloc();
   }
   // ..........................................................................
 };
+
+
+
 #endif

@@ -23,7 +23,7 @@ template <class TField>class Nodes{
 
   private:
     int nNodes; /**< Número de nós*/
-    double *x;  /**< Coordenada nodais*/
+    double *x = nullptr;  /**< Coordenada nodais*/
     TField fields; /**< Campo das variaveis*/ 
 
   public:

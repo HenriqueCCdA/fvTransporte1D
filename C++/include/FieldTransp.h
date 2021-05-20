@@ -16,7 +16,7 @@
 class FieldTransp : public FieldDif {
 
 private:
-  double *velocity; /**< Campo de velocidade*/
+  double *velocity = nullptr; /**< Campo de velocidade*/
 
 public:
 

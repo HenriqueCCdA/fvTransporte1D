@@ -78,18 +78,18 @@ void WriterVTK<TField>::write(void) {
                         fieldVTK::scalarsVTK);
 
   this->propVtk<double>(file,
-                        this->mesh->get_cells().get_prop().get_ceofDif(),
-                        "ceofDiff",
-                         nCells,
-                         1,
-                         fieldVTK::scalarsVTK);
+            this->mesh->get_cells().get_prop().get_coefDif()->get_value(),
+            "ceofDiff",
+            nCells,
+            1,
+            fieldVTK::scalarsVTK);
 
   this->propVtk<double>(file,
-                        this->mesh->get_cells().get_prop().get_rho(),
-                        "rho",
-                        nCells,
-                        1,
-                        fieldVTK::scalarsVTK);
+            this->mesh->get_cells().get_prop().get_rho()->get_value(),
+            "rho",
+            nCells,
+            1,
+            fieldVTK::scalarsVTK);
 
   // ... Campo por Pontos
   this->pointData(file, nNodes);

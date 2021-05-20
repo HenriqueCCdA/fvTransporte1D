@@ -1,19 +1,5 @@
 #include"../include/Prop.h"
 
-static double polinomio(const double* const a, double const u,
-                        short const nTerms ) {
-
-  double tmp;
-
-  tmp = a[0];
-  for(int i = 0; i < nTerms; i++) {
-    tmp += a[i]*pow(u, i);
-  }
-
-  return tmp;
-
-}
-
 /***************************************************************************
  *@details Atualiza os coeficientes de difusao em funcao de u               
  ***************************************************************************
@@ -25,14 +11,15 @@ static double polinomio(const double* const a, double const u,
  ***************************************************************************/
 void Prop::updateCoefDif(const double* const u, unsigned int const n) {
 
-  double* const coefDif = this->ceofDif;
-  double const a[] = {1.0, 0.0000, 0.0000};
+  double* const coefDif = this->get_coefDif()->get_value();
 
-  for (int i = 0; i < n; i++) {
-    coefDif[i] = polinomio(a, u[i], 2);
+  if(this->get_coefDif()->isToUpdate()){
+    for (int i = 0; i < n; i++)
+      coefDif[i] = this->get_coefDif()->get_pol()->polinomio(u[i]);
   }
-
+  
 }
+/***************************************************************************/
 
 /***************************************************************************
  *@details Atualiza a massa especifica em funcao de u
@@ -45,11 +32,12 @@ void Prop::updateCoefDif(const double* const u, unsigned int const n) {
  ***************************************************************************/
 void Prop::updateRho(const double* const u, unsigned int const n) {
 
-  double* const rho = this->rho;
-  double const a[] = { 2.0, 0.0000, -0.0000 };
+  double* const rho = this->get_rho()->get_value();
 
-  for (int i = 0; i < n; i++) {
-    rho[i] = polinomio(a, u[i], 2);
-  }
+  if (this->get_coefDif()->isToUpdate()){
+    for (int i = 0; i < n; i++) 
+      rho[i] = this->get_rho()->get_pol()->polinomio(u[i]);
+  }    
 
 }
+/***************************************************************************/

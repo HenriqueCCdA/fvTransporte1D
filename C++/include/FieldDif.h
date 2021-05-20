@@ -16,9 +16,9 @@
 class FieldDif : public Field {
 
 private:
-  double *u;    /**< Campo U*/
-  double *gradU;/**< Campo gradiente do campo U*/
-  double *flux; /**< Campo gradiente do flux*/
+  double *u = nullptr;    /**< Campo U*/
+  double *gradU = nullptr;/**< Campo gradiente do campo U*/
+  double *flux = nullptr; /**< Campo gradiente do flux*/
 
 public:
 

@@ -22,8 +22,8 @@ class TriSolver : public Solver {
   private:
     
     // ...
-    double *um; /**< Arranjo auxiliar do solver tridiagonal*/
-    double *bm; /**< Arranjo auxiliar do solver tridiagonal*/
+    double *um = nullptr; /**< Arranjo auxiliar do solver tridiagonal*/
+    double *bm = nullptr; /**< Arranjo auxiliar do solver tridiagonal*/
     // .......................................................................... 
 
     // ...

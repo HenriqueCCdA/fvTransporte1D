@@ -9,6 +9,7 @@
 #include"IntTemp.h"
 #include"CellLoop.h"
 #include"Writer.h"
+#include"Solver.h"
 
 using namespace std;
 

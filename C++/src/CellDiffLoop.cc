@@ -1,4 +1,4 @@
-#include"../include/CellLoop.h"
+#include"../include/CellDiffLoop.h"
 
 /***************************************************************************
 *@details Este construtor recebe um ponteiro para solver, mesh e intTemp.  
@@ -6,7 +6,7 @@
 *@date      2021 - 2021
 *@author    Henrique C. C. de Andrade
 ***************************************************************************/
-CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh,
+CellDiffLoop::CellDiffLoop(Solver *solver, Mesh<FieldDif> *mesh,
                            IntTemp *intTemp) {
   this->solver = solver;
   this->mesh = mesh;
@@ -41,7 +41,7 @@ CellHeatLoop::CellHeatLoop(Solver *solver, Mesh<FieldDif> *mesh,
  *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ********************************************************************************/
-void CellHeatLoop::montaSistema(void){
+void CellDiffLoop::montaSistema(void){
   // ...
   double aP0, kf, aE, aW;
   // ..
@@ -123,7 +123,7 @@ void CellHeatLoop::montaSistema(void){
  *@date      2021 - 2021                    
  *@author    Henrique C. C. de Andrade
  ********************************************************************************/
-void CellHeatLoop::gradients(void) {
+void CellDiffLoop::gradients(void) {
   
   // ...
   const double* const coefDif = this->mesh->get_cells().get_prop()
@@ -171,7 +171,7 @@ void CellHeatLoop::gradients(void) {
  *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  ********************************************************************************/
-void CellHeatLoop::flux(void) {
+void CellDiffLoop::flux(void) {
 
   // ...
   const double* const coefDif = this->mesh->get_cells()
@@ -215,7 +215,7 @@ void CellHeatLoop::flux(void) {
  *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-void CellHeatLoop::boundaryCell(double &aL, double &aD, double &aU, double &b
+void CellDiffLoop::boundaryCell(double &aL, double &aD, double &aU, double &b
                               , double rho, double cp, double kP, double kf
                               , double dx, double dt, double u
                               , short ccType, double *aCcValue, short c) {
@@ -275,7 +275,7 @@ void CellHeatLoop::boundaryCell(double &aL, double &aD, double &aU, double &b
  *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
-double CellHeatLoop::boundaryGrad(short const ccType  , const double* const aCcValue,
+double CellDiffLoop::boundaryGrad(short const ccType  , const double* const aCcValue,
                                    double const uP     , double const uV,
                                    double const coefDif, double gradU0,
                                    double const dx     ,double const dFace,

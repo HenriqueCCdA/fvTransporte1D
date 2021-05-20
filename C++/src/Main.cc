@@ -3,7 +3,7 @@
 #include"../include/TriaSolver.h"
 #include"../include/EpdSolver.h"
 #include"../include/Files.h"
-#include"../include/CellLoop.h"
+#include"../include/CellDiffLoop.h"
 #include"../include/RunTimes.h"
 #include"../include/GMemoria.h"
 #include"../include/GlobalVar.h"
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   // ............................................................................
 
   // ...
-  CellLoop *heatCell1D = new CellHeatLoop(solver, &mesh, &intTemp);
+  CellLoop *heatCell1D = new CellDiffLoop(solver, &mesh, &intTemp);
   // ............................................................................
 
   // 

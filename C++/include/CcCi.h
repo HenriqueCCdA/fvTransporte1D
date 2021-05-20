@@ -15,7 +15,7 @@ enum typeCc { temp = 1, /**< Tipo de temperatura pescrita. */
  *@brief     A Classe com as condições de contorno e inicias.
  *@details   A Classe com as condições de contorno e inicias.
  *******************************************************************************
- *@date      19/04/2021 - 25/04/2021
+ *@date      2021 - 2021
  *@author    Henrique C. C. de Andrade
  *******************************************************************************/
 class CcCi {

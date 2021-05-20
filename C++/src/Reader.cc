@@ -108,6 +108,7 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
       file >> dValue;
       mesh.get_ccci().set_cciValue(dValue);
     }
+    // ........................................................................
 
     // ... leitura das propriedades
     else if (word == "rho" || word == "diffusion") {
@@ -133,11 +134,11 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
 
       // ... variacao por um polinomio
       else if (type == "pol") {
-        double a[nTermMax];
+        double a[nTermPolMax];
         int iValue;
         file >> iValue;
       
-        if (iValue > nTermMax) {
+        if (iValue > nTermPolMax) {
           cout << "Erro no numero de termos do poliniomo !!" << endl;
           exit(error::nTermsPol);
         }
@@ -149,13 +150,13 @@ void Reader<TField>::read(Mesh<TField> &mesh, IntTemp &intTemp,Files &files) {
         prop->set_type(typePropVar::varU);
         prop->get_pol()->set_a(a, iValue);
       }
-      // ........................................................................
-      
+      // ........................................................................     
     }
+    // ........................................................................
 
-    else if (word == "end") {
-      break;
-    }
+    // ...
+    else if (word == "end") break;
+    // ........................................................................
 
   }
   // ........................................................................

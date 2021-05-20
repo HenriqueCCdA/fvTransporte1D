@@ -40,6 +40,7 @@ template <class TField> void EpdSolver<TField>::solver(void){
 
     // ...
     this->intTemp->updateTime();
+    this->intTemp->display();
     // ........................................................................
 
     for(int j = 0; j < 10; j++){
